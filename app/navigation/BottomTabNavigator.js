@@ -1,30 +1,40 @@
 import React from "react";
-
+import {TouchableOpacity, View, Text} from "react-native";
 import { MainStackNavigator } from "./StackNavigator";
 
 import LoginScreen from "../screens/LoginScreen";
 import WriteStoryScreen from "../screens/WriteStoryScreen";
-import {createMaterialBottomTabNavigator} from "@react-navigation/material-bottom-tabs";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
+
 
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      activeColor="#fff"
-      shifting={true}
+      tabBarOptions = {{
+        showLabel : false,
+        activeBackgroundColor : '#43820D',
+        inactiveBackgroundColor : '#43820D',
+        activeTintColor : '#fff',
+        inactiveTintColor : '#E6E1C5',
+        style: {
+          height: 60
+        },
+      }}
+
     >
       <Tab.Screen
         name="WriteStoryScreen"
         component={WriteStoryScreen}
         options={{
-          tabBarLabel: 'Proposer',
-          tabBarColor: '#c9009e',
+          tabBarLabel: 'Suggérer',
           tabBarIcon: ({ color }) => (
-            <Icon name="pencil" color={color} size={26} />
+            <Icon2 name="pencil-circle-outline" color={color} size={54} />
           ),
         }}
       />
@@ -33,10 +43,11 @@ const BottomTabNavigator = () => {
         component={MainStackNavigator}
         options={{
           tabBarLabel: 'Accueil',
-          tabBarColor: '#56AD00',
           tabBarIcon: ({ color }) => (
-            <Icon name="ios-home" color={color} size={26} />
-          ),
+            <Icon name="earth-sharp" color={color} size={90}
+                  style={{ width: 100, height : 134, backgroundColor: '#43820D', borderRadius: 130, textAlign: 'center'
+                  }}/>
+          )
         }}
       />
       <Tab.Screen
@@ -44,12 +55,12 @@ const BottomTabNavigator = () => {
         component={LoginScreen}
         options={{
           tabBarLabel: 'Identification',
-          tabBarColor: '#00ad8e',
           tabBarIcon: ({ color }) => (
-            <Icon name="log-in" color={color} size={26} />
+            <Icon name="person-circle-outline" color={color} size={54} />
           ),
         }}
       />
+
 
     </Tab.Navigator>
   );

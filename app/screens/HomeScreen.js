@@ -69,8 +69,8 @@ export default HomeScreen = ({story, navigation}) => {
   const [region, setRegion] = useState({
       latitude: 48.132491,
       longitude: -1.698612,
-      latitudeDelta: 0.2,
-      longitudeDelta: 0.2
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.1
     });
 
   const [markers, setMarkers] = useState( { stories: [
@@ -114,12 +114,14 @@ export default HomeScreen = ({story, navigation}) => {
         showsUserLocation = {true}
       >
         {mapMarkers}
-        <Marker
+
+        {/*test data to delete later*/}
+        {/*<Marker
           coordinate={{ latitude: 33.7872131, longitude: -84.381931 }}
           title='Flatiron School Atlanta'
           description='This is where the magic happens!'
         >
-        </Marker>
+        </Marker>*/}
       </MapView>
     </SafeAreaView>
 

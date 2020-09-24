@@ -1,4 +1,5 @@
 import React from "react";
+import { Image, View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import HomeScreen from "../screens/HomeScreen";
@@ -7,27 +8,41 @@ import StoryScreen from "../screens/StoryScreen";
 
 const Stack = createStackNavigator();
 
+
+function LogoTitle() {
+  return (
+    <Image
+      style={{ width: 300, height: 54, resizeMode:'contain'}}
+      source={require('../assets/appPictures/logoTitle.png')}
+    />
+  );
+}
+
+
 const MainStackNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="HomeScreen"
                     component={HomeScreen}
                     options={{
-                      title: 'Petit Randonneur',
+                      headerTitle: props => <LogoTitle {...props} /> ,
+                      headerTitleAlign : 'center',
                       headerStyle: {
-                        backgroundColor: '#56AD00',
+                        backgroundColor: '#43820D',
+                        height: 60
                       },
-                      headerTintColor: 'white',
+                      headerTintColor: '#E6E1C5',
                     }}
       />
       <Stack.Screen name="StoryScreen"
                     component={StoryScreen}
                     options={{
-                      title: 'Histoire du lieu',
+                      headerTitle: props => <LogoTitle {...props} /> ,
+                      headerTitleAlign : 'center',
                       headerStyle: {
-                        backgroundColor: '#56AD00',
+                        backgroundColor: '#43820D',
                       },
-                      headerTintColor: 'white',
+                      headerTintColor: '#E6E1C5',
                     }}
       />
 
