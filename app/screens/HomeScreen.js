@@ -145,6 +145,6 @@ const styles = StyleSheet.create({
   },
   callout : {
     height: '20%',
-    width:'80%'
+    width:'80%',
   }
 });

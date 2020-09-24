@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   },
   title: {
     alignItems: "center",
+    fontFamily: "JosefinSans-Regular",
     fontSize : 35,
     marginVertical: 20,
   },

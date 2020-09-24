@@ -45,6 +45,18 @@ const MainStackNavigator = () => {
                       headerTintColor: '#E6E1C5',
                     }}
       />
+      {/*<Stack.Screen name="LoginScreen"
+                    component={LoginScreen}
+                    options={{
+                      headerTitle: props => <LogoTitle {...props} /> ,
+                      headerTitleAlign : 'center',
+                      headerStyle: {
+                        backgroundColor: '#43820D',
+                        height: 60
+                      },
+                      headerTintColor: '#E6E1C5',
+                    }}
+      />*/}
 
     </Stack.Navigator>
   );
