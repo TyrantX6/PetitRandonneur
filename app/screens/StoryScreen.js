@@ -9,6 +9,7 @@ import {
   ScrollView
 } from 'react-native';
 
+import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 
 
@@ -20,12 +21,22 @@ export default StoryScreen = ({route}) => {
       <ScrollView>
         <Text style={styles.storyTitle}>{route.params.title}</Text>
         <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#FF8811'} size={50} />
-        <Image style={styles.storyCover}source={route.params.cover}/>
+        <View style={styles.storyCover}>
+          <ImageModal
+            resizeMode="center"
+            imageBackgroundColor="#E6E1C5"
+            style={{
+              width: 300,
+              height: 250,
+            }}
+            source={route.params.cover}
+          />
+        </View>
+
         <Text style={styles.incentive}>Trouve moi si tu peux!</Text>
         <Text style={styles.tale}>{route.params.tale}</Text>
         <Text style={styles.author}>{route.params.author}</Text>
       </ScrollView>
-
     </SafeAreaView>
 
   );
@@ -54,13 +65,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
     textDecorationLine : 'underline',
-    paddingVertical : 10
+    paddingTop: 2,
+    paddingBottom : 10
   },
   storyCover: {
     borderRadius : 5,
-    width :'80%',
-    height: 250,
-    resizeMode: 'contain',
     alignSelf : 'center',
   },
   tale: {
