@@ -34,6 +34,8 @@
 		821B5F463E9E4C8795E1FF78 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59C0757BFA8047389EC55778 /* Zocial.ttf */; };
 		D6F53D6D13724797A9B3093D /* JosefinSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E097225C06824AA7B2D04435 /* JosefinSans-Regular.ttf */; };
 		FFBEA81F1D974B92B3D4668B /* Kalam-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A6F7B2E50BD24C7085EC4CBC /* Kalam-Regular.ttf */; };
+		07043DF5A61D4C6983F8B60D /* JosefinSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C88A713ECE4243FD9C0CC58D /* JosefinSans-Bold.ttf */; };
+		BA36163D204C442D8876D33D /* JosefinSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCDE4B2F2BA04CE7BD01885B /* JosefinSans-SemiBold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +89,8 @@
 		59C0757BFA8047389EC55778 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E097225C06824AA7B2D04435 /* JosefinSans-Regular.ttf */ = {isa = PBXFileReference; name = "JosefinSans-Regular.ttf"; path = "../app/assets/fonts/JosefinSans-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		A6F7B2E50BD24C7085EC4CBC /* Kalam-Regular.ttf */ = {isa = PBXFileReference; name = "Kalam-Regular.ttf"; path = "../app/assets/fonts/Kalam-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C88A713ECE4243FD9C0CC58D /* JosefinSans-Bold.ttf */ = {isa = PBXFileReference; name = "JosefinSans-Bold.ttf"; path = "../app/assets/fonts/JosefinSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BCDE4B2F2BA04CE7BD01885B /* JosefinSans-SemiBold.ttf */ = {isa = PBXFileReference; name = "JosefinSans-SemiBold.ttf"; path = "../app/assets/fonts/JosefinSans-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,6 +219,8 @@
 				59C0757BFA8047389EC55778 /* Zocial.ttf */,
 				E097225C06824AA7B2D04435 /* JosefinSans-Regular.ttf */,
 				A6F7B2E50BD24C7085EC4CBC /* Kalam-Regular.ttf */,
+				C88A713ECE4243FD9C0CC58D /* JosefinSans-Bold.ttf */,
+				BCDE4B2F2BA04CE7BD01885B /* JosefinSans-SemiBold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -376,6 +382,8 @@
 				821B5F463E9E4C8795E1FF78 /* Zocial.ttf in Resources */,
 				D6F53D6D13724797A9B3093D /* JosefinSans-Regular.ttf in Resources */,
 				FFBEA81F1D974B92B3D4668B /* Kalam-Regular.ttf in Resources */,
+				07043DF5A61D4C6983F8B60D /* JosefinSans-Bold.ttf in Resources */,
+				BA36163D204C442D8876D33D /* JosefinSans-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

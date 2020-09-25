@@ -7,7 +7,7 @@ import WriteStoryScreen from "../screens/WriteStoryScreen";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +34,7 @@ const BottomTabNavigator = () => {
         options={{
           tabBarLabel: 'Suggérer',
           tabBarIcon: ({ color }) => (
-            <Icon2 name="pencil-circle-outline" color={color} size={54} />
+            <IconMaterial name="pencil-circle-outline" color={color} size={54} />
           ),
         }}
       />
