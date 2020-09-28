@@ -13,14 +13,30 @@ import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 
 
+
+
+
 export default StoryScreen = ({route}) => {
+
+  const [storyFeedback, setStoryFeedback] = useState(0);
 
   return (
 
     <SafeAreaView style={styles.background}>
       <ScrollView>
         <Text style={styles.storyTitle}>{route.params.title}</Text>
-        <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#FF8811'} size={50} />
+
+        <TouchableOpacity
+          onPress={()=> setStoryFeedback(1)}
+        >
+          {storyFeedback === 0 ?
+            <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#FF8811'} size={50} />:
+            <IconMaterial style={styles.favoriteIcon} name="favorite" color={'#FF8811'} size={50} />
+          }
+        </TouchableOpacity>
+
+
+
         <View style={styles.storyCover}>
           <ImageModal
             resizeMode="center"

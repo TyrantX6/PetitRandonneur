@@ -34,7 +34,7 @@ const BottomTabNavigator = () => {
         options={{
           tabBarLabel: 'Suggérer',
           tabBarIcon: ({ color }) => (
-            <IconMaterial name="pencil-circle-outline" color={color} size={54} />
+            <IconMaterial name="pencil-circle-outline" color={color} size={50} />
           ),
         }}
       />
@@ -44,8 +44,8 @@ const BottomTabNavigator = () => {
         options={{
           tabBarLabel: 'Accueil',
           tabBarIcon: ({ color }) => (
-            <Icon name="earth-sharp" color={color} size={90}
-                  style={{ width: 100, height : 134, backgroundColor: '#43820D', borderRadius: 130, textAlign: 'center'
+            <Icon name="earth-sharp" color={color} size={86}
+                  style={{ width: 100, height : 124, backgroundColor: '#43820D', borderRadius: 130, textAlign: 'center'
                   }}/>
           )
         }}
@@ -56,7 +56,7 @@ const BottomTabNavigator = () => {
         options={{
           tabBarLabel: 'Identification',
           tabBarIcon: ({ color }) => (
-            <Icon name="person-circle-outline" color={color} size={54} />
+            <Icon name="person-circle-outline" color={color} size={50} />
           ),
         }}
       />
