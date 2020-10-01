@@ -8,70 +8,18 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+import Geolocation from 'react-native-geolocation-service';
+import { PermissionsAndroid } from 'react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 
 
 
 export default HomeScreen = ({story, navigation}) => {
 
-  const [region, setRegion] = useState({
-      latitude: 48.132491,
-      longitude: -1.698612,
-      latitudeDelta: 0.1,
-      longitudeDelta: 0.1
-    });
-
-  const [markers2, setMarkers2] = useState( { stories: [
-    {id: 1, latitude: 48.130500, longitude : -1.696231, title: 'Colonnes de Beauregard', excerpt: 'Des colonnes grises et mystérieuses qui changent de place quand tu dors!'},
-    {id: 2, latitude: 48.129054, longitude : -1.698880, title: 'Boite a livres Cucillé', excerpt: 'Une boite qui mange les livres'},
-    {id: 3, latitude: 48.133349, longitude : -1.642516, title: 'Petit bateau n\'est plus sur l\'eau...', excerpt: 'Un bateau coincé sur l\'herbe, aidez-le!',
-      tale: "Il était tout heureux petit bateau car tous les jours il tanguait sur l'eau." +
-        "\n" +
-        "\n" +
-        "Mais après la grande marée, plus jamais il n'eut navigué." +
-        "\n" +
-        "\n" +
-        "Pleurant à chaudes larmes, petit bateau finit par rendre les armes." +
-        "\n" +
-        "\n" +
-        "Un jour vint un petit randonneur qui vint lui demander l'heure." +
-        "\n" +
-        "\n" +
-        "\"l'heure je ne puis plus donner ! car sur le sol je ne ressens plus les marées." +
-        "\n" +
-        "\n" +
-        "Il vint alors une idée au petit randonneur bien fatigué." +
-        "\n" +
-        "\n" +
-        "\"Si je te pousse et te remet à l'eau, pourras tu me chuchoter l'heure en quelques mots ?" +
-        "\n" +
-        "\n" +
-        "Petit bateau retrouvant l'espoir acquiesça en chassant ses idées noires !" +
-        "\n" +
-        "\n" +
-        "Le petit randonneur poussa, poussa jusqu'à le remettre à flot. Une vague de plus et il était déjà sur l'eau." +
-        "\n" +
-        "\n" +
-        "Tout fatigué de ses efforts accumulés, il grimpa à bord pour se reposer les pieds." +
-        "\n" +
-        "\n" +
-        "L'heure n'avait désormais plus d'importance, car devenu matelot, pour l'aventure il était déjà en partance !",
-        cover: require('../assets/appPictures/mockedData/littleBoat.jpg'),
-        author: 'Thomas Pottier'
-        }
-    ]
-  });
-
-  const [markers, setMarkers] = useState([]);
-
-  useEffect(() => {
-    getStories()
-  }, []);
-
   const getStories = async () => {
     try {
       let responseResults = await fetch('http://192.168.1.23:8000/stories/', {
-        method : 'GET'
+          method : 'GET'
         }
       )
 
@@ -85,7 +33,44 @@ export default HomeScreen = ({story, navigation}) => {
 
   };
 
+  const getLocation = () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position);
+        setUserLocation(position);
+        setRegion({
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
+          latitudeDelta: 0.08,
+          longitudeDelta: 0.08
+      }
+      );
+      },
+      (error) => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
 
+
+  }
+
+  useEffect(() => {
+    getLocation();
+    getStories();
+  }, []);
+
+  const [userLocation, setUserLocation] = useState('')
+
+  const [region, setRegion] = useState({
+      latitude: 48.857094,
+      longitude: 2.336322,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.1
+    });
+
+  const [markers, setMarkers] = useState([]);
 
 
   let mapMarkers;
@@ -97,6 +82,7 @@ export default HomeScreen = ({story, navigation}) => {
     title={story.title}
     excerpt={story.excerpt}
     onCalloutPress={() => navigation.navigate('StoryScreen', {
+      id : story.id,
       title : story.title,
       excerpt : story.excerpt,
       tale : story.tale,
@@ -121,23 +107,23 @@ export default HomeScreen = ({story, navigation}) => {
 
     </Marker >);
 
+  console.log('userLocation:', userLocation)
   return (
     <SafeAreaView>
       <MapView
+        onMapReady={() => {
+          PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          )}}
         style={styles.map}
         region={region}
         onRegionChangeComplete={region =>setRegion(region)}
         showsUserLocation = {true}
+        followsUserLocation={true}
+        showsMyLocationButton={true}
       >
         {mapMarkers}
 
-        {/*test data to delete later*/}
-        {/*<Marker
-          coordinate={{ latitude: 33.7872131, longitude: -84.381931 }}
-          title='Flatiron School Atlanta'
-          description='This is where the magic happens!'
-        >
-        </Marker>*/}
       </MapView>
     </SafeAreaView>
 
