@@ -27,7 +27,7 @@ export default StoryScreen = ({route}) => {
         <Text style={styles.storyTitle}>{route.params.title}</Text>
 
         <TouchableOpacity
-          onPress={()=> setStoryFeedback(1)}
+          onPress={()=>   setStoryFeedback(1)}
         >
           {storyFeedback === 0 ?
             <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#FF8811'} size={50} />:

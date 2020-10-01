@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MapView, { Callout, Marker } from 'react-native-maps'
 import {
   SafeAreaView,
@@ -21,10 +21,11 @@ export default HomeScreen = ({story, navigation}) => {
       longitudeDelta: 0.1
     });
 
-  const [markers, setMarkers] = useState( { stories: [
+  const [markers2, setMarkers2] = useState( { stories: [
     {id: 1, latitude: 48.130500, longitude : -1.696231, title: 'Colonnes de Beauregard', excerpt: 'Des colonnes grises et mystérieuses qui changent de place quand tu dors!'},
     {id: 2, latitude: 48.129054, longitude : -1.698880, title: 'Boite a livres Cucillé', excerpt: 'Une boite qui mange les livres'},
-    {id: 3, latitude: 48.133349, longitude : -1.642516, title: 'Petit bateau n\'est plus sur l\'eau...', excerpt: 'Un bateau coincé sur l\'herbe, aidez-le!', tale: "Il était tout heureux petit bateau car tous les jours il tanguait sur l'eau." +
+    {id: 3, latitude: 48.133349, longitude : -1.642516, title: 'Petit bateau n\'est plus sur l\'eau...', excerpt: 'Un bateau coincé sur l\'herbe, aidez-le!',
+      tale: "Il était tout heureux petit bateau car tous les jours il tanguait sur l'eau." +
         "\n" +
         "\n" +
         "Mais après la grande marée, plus jamais il n'eut navigué." +
@@ -61,12 +62,37 @@ export default HomeScreen = ({story, navigation}) => {
     ]
   });
 
+  const [markers, setMarkers] = useState([]);
+
+  useEffect(() => {
+    getStories()
+  }, []);
+
+  const getStories = async () => {
+    try {
+      let responseResults = await fetch('http://192.168.1.23:8000/stories/', {
+        method : 'GET'
+        }
+      )
+
+      let jsonResponseResults = await responseResults.json();
+      setMarkers(jsonResponseResults);
+      console.log('response results:', markers)
+    } catch (e) {
+      console.log('response results:', markers)
+      alert('Problème de connexion au serveur.')
+    }
+
+  };
+
+
+
 
   let mapMarkers;
-  mapMarkers = markers.stories.map((story) =>
+  mapMarkers = markers.map((story) =>
     <Marker style={styles.callout}
     key={story.id}
-    coordinate={{ latitude: story.latitude, longitude: story.longitude }}
+    coordinate={{ latitude: parseFloat(story.latitude), longitude: parseFloat(story.longitude) }}
     image={require('../assets/appPictures/orangePin3.png')}
     title={story.title}
     excerpt={story.excerpt}
