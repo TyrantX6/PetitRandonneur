@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import MapView, { Callout, Marker } from 'react-native-maps'
+import MapView, { Callout, Marker } from 'react-native-maps';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,9 +16,22 @@ import IconFA from 'react-native-vector-icons/FontAwesome';
 
 export default HomeScreen = ({story, navigation}) => {
 
+  const [ loading, setLoading ] = useState(true)
+
+  const [userLocation, setUserLocation] = useState('');
+
+  const [region, setRegion] = useState({
+    latitude: 48.857094,
+    longitude: 2.336322,
+    latitudeDelta: 0.1,
+    longitudeDelta: 0.1
+  });
+
+  const [markers, setMarkers] = useState([]);
+
   const getStories = async () => {
     try {
-      let responseResults = await fetch('http://192.168.1.23:8000/stories/', {
+      let responseResults = await fetch('http://10.27.162.13:8000/stories/', {
           method : 'GET'
         }
       )
@@ -28,7 +41,7 @@ export default HomeScreen = ({story, navigation}) => {
       console.log('response results:', markers)
     } catch (e) {
       console.log('response results:', markers)
-      alert('Problème de connexion au serveur.')
+      alert('Problème de connexion au serveur. Les histoires n\'apparaitront pas.')
     }
 
   };
@@ -36,42 +49,43 @@ export default HomeScreen = ({story, navigation}) => {
   const getLocation = () => {
     Geolocation.getCurrentPosition(
       (position) => {
-        console.log(position);
-        setUserLocation(position);
         setRegion({
-          latitude: userLocation.coords.latitude,
-          longitude: userLocation.coords.longitude,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
           latitudeDelta: 0.08,
           longitudeDelta: 0.08
-      }
-      );
+        });
+        setUserLocation(position);
+        setLoading(false);
       },
       (error) => {
         // See error code charts below.
         console.log(error.code, error.message);
+        setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000, distanceFilter : 500 }
     );
-
 
   }
 
+
   useEffect(() => {
-    getLocation();
     getStories();
   }, []);
 
-  const [userLocation, setUserLocation] = useState('')
+  useEffect(() => {
+    getLocation();
+  }, []);
 
-  const [region, setRegion] = useState({
-      latitude: 48.857094,
-      longitude: 2.336322,
-      latitudeDelta: 0.1,
-      longitudeDelta: 0.1
-    });
-
-  const [markers, setMarkers] = useState([]);
-
+  const mapView = React.createRef();
+  const goToUserLocation = () => {
+    mapView.current.animateToRegion({ // Takes a region object as parameter
+      latitude: userLocation.coords.latitude,
+      longitude: userLocation.coords.longitude,
+      latitudeDelta: 0.08,
+      longitudeDelta: 0.08
+    },1000);
+  }
 
   let mapMarkers;
   mapMarkers = markers.map((story) =>
@@ -107,9 +121,14 @@ export default HomeScreen = ({story, navigation}) => {
 
     </Marker >);
 
-  console.log('userLocation:', userLocation)
+  console.log('region:', region)
+
+  if (loading) {
+    return <Text>Currently loading!</Text>
+  }
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
+
       <MapView
         onMapReady={() => {
           PermissionsAndroid.request(
@@ -119,23 +138,28 @@ export default HomeScreen = ({story, navigation}) => {
         region={region}
         onRegionChangeComplete={region =>setRegion(region)}
         showsUserLocation = {true}
-        followsUserLocation={true}
-        showsMyLocationButton={true}
+        ref={mapView}
       >
         {mapMarkers}
-
       </MapView>
+      <TouchableOpacity style = {styles.goToButton}
+                        onPress = {goToUserLocation}>
+        <IconFA style={{ textAlign: 'center'}} name="crosshairs" color={'#FF8811'} size={40}/>
+      </TouchableOpacity>
+
     </SafeAreaView>
-
-
-
-
   );
 };
 
 const styles = StyleSheet.create({
+  container : {
+    flex: 1,
+    width: '100%',
+    height : '100%',
+    alignItems: 'center',
+  },
   map: {
-    height: '100%',
+    ...StyleSheet.absoluteFillObject,
   },
   text : {
     fontFamily:"Kalam-Regular",
@@ -152,4 +176,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 12
   },
+  goToButton : {
+    position: 'absolute',
+    bottom: 16,
+    right : 18
+  }
 });
