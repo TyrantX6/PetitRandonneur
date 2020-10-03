@@ -5,18 +5,26 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableHighlight,
+  Modal
 } from 'react-native';
 
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from 'react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome';
+import IconIonic from 'react-native-vector-icons/Ionicons';
+import LottieView from 'lottie-react-native';
 
 
 
 export default HomeScreen = ({story, navigation}) => {
 
-  const [ loading, setLoading ] = useState(true)
+  const [ loading, setLoading ] = useState(true);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [ permissionGranted, setPermissionGranted ] = useState('')
 
   const [userLocation, setUserLocation] = useState('');
 
@@ -31,7 +39,7 @@ export default HomeScreen = ({story, navigation}) => {
 
   const getStories = async () => {
     try {
-      let responseResults = await fetch('http://10.27.162.13:8000/stories/', {
+      let responseResults = await fetch('http://192.168.1.23:8000/stories/', {
           method : 'GET'
         }
       )
@@ -46,7 +54,7 @@ export default HomeScreen = ({story, navigation}) => {
 
   };
 
-  const getLocation = () => {
+  const getUserLocation = () => {
     Geolocation.getCurrentPosition(
       (position) => {
         setRegion({
@@ -55,7 +63,6 @@ export default HomeScreen = ({story, navigation}) => {
           latitudeDelta: 0.08,
           longitudeDelta: 0.08
         });
-        setUserLocation(position);
         setLoading(false);
       },
       (error) => {
@@ -63,29 +70,70 @@ export default HomeScreen = ({story, navigation}) => {
         console.log(error.code, error.message);
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000, distanceFilter : 500 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000, distanceFilter : 100 }
     );
 
   }
 
+  const permissionCheck = async () => {
+      await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(res => {
+        if (res == "granted") {
+          setPermissionGranted(true);
+          getLocation();
+        } else {
+          requestGPSPermission();
+          console.log("Location is not enabled");
+        }
+      });
+  }
+
+  const requestGPSPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Nous avons besoin de votre approbation.",
+          message:
+            "Notre application a besoin de votre autorisation pour pouvoir vous localiser. " +
+            "Vous bénéficierez ainsi de fontionnalités supplémentaires.",
+          buttonNeutral: "Plus tard",
+          buttonNegative: "Refuser",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setPermissionGranted(true)
+        console.log("You can use the GPS");
+      } else {
+        setPermissionGranted(false)
+        console.log("GPS permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
 
   useEffect(() => {
     getStories();
   }, []);
 
   useEffect(() => {
-    getLocation();
+    permissionCheck();
+    getUserLocation();
   }, []);
 
   const mapView = React.createRef();
+
   const goToUserLocation = () => {
-    mapView.current.animateToRegion({ // Takes a region object as parameter
-      latitude: userLocation.coords.latitude,
-      longitude: userLocation.coords.longitude,
+    getUserLocation();
+    mapView.current.animateToRegion({
+      latitude: userLocation.latitude,
+      longitude: userLocation.longitude,
       latitudeDelta: 0.08,
       longitudeDelta: 0.08
-    },1000);
+    }, {duration : 100});
   }
+
 
   let mapMarkers;
   mapMarkers = markers.map((story) =>
@@ -123,17 +171,49 @@ export default HomeScreen = ({story, navigation}) => {
 
   console.log('region:', region)
 
+
   if (loading) {
-    return <Text>Currently loading!</Text>
+    return (
+      <SafeAreaView style={styles.container}>
+        <LottieView style={styles.bigLoader} source={require('../assets/animations/34279-simple-loader.json')} autoPlay loop />
+      </SafeAreaView>
+    )
+
   }
   return (
     <SafeAreaView style={styles.container}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Bienvenue parmi nous randonneur!</Text>
+            <Text style={styles.modalText}>
+              A vous de découvrir nos histoires en cliquant sur les têtes d'épingles oranges, un second clic sur le résumé vous emmènera sur l'histoire.{"\n"}{"\n"}
+              Vous pouvez recentrer la vue sur votre position avec l'icone de cible orange en bas à droite (seulement si vous avez autorisé la localisation).{"\n"}{"\n"}
+              Merci de créer un compte et/ou de vous connecter avant de pouvoir envoyer des histoires ou les ajouter en favoris.{"\n"}{"\n"}
+              Bonne route!
+
+
+            </Text>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#43820D" }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>OK</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+
 
       <MapView
-        onMapReady={() => {
-          PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-          )}}
         style={styles.map}
         region={region}
         onRegionChangeComplete={region =>setRegion(region)}
@@ -142,10 +222,24 @@ export default HomeScreen = ({story, navigation}) => {
       >
         {mapMarkers}
       </MapView>
-      <TouchableOpacity style = {styles.goToButton}
-                        onPress = {goToUserLocation}>
-        <IconFA style={{ textAlign: 'center'}} name="crosshairs" color={'#FF8811'} size={40}/>
+
+      <TouchableOpacity style = {styles.modalButton} onPress = {() => {
+        setModalVisible(true);
+      }}>
+        <IconIonic style={{ textAlign: 'center'}} name="information-circle-outline" color={'black'} size={40}/>
       </TouchableOpacity>
+
+      { permissionGranted === true ?
+
+        <TouchableOpacity style = {styles.goToButton} onPress = {goToUserLocation}>
+          <IconFA style={{ textAlign: 'center'}} name="crosshairs" color={'#FF8811'} size={40}/>
+        </TouchableOpacity>
+        :
+        <TouchableOpacity style = {styles.permissionButton} onPress = {requestGPSPermission}>
+          <IconFA style={{ textAlign: 'center'}} name="map-signs" color={'#FF8811'} size={40}/>
+        </TouchableOpacity>
+      }
+
 
     </SafeAreaView>
   );
@@ -180,5 +274,67 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 16,
     right : 18
+  },
+  permissionButton : {
+    position: 'absolute',
+    bottom: 60,
+    right : 18
+  },
+  modalButton : {
+    position: 'absolute',
+    top: 16,
+    right : 16
+  },
+  bigLoader : {
+    width: 200,
+    height: 200,
+    flex: 1
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "#E6E1C5",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#0C2E06",
+    shadowOffset: {
+      width: 15,
+      height: 10
+    },
+    shadowOpacity: 0.55,
+    shadowRadius: 5,
+    elevation: 16
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  openButton: {
+    backgroundColor: "black",
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    elevation: 2
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontFamily: "JosefinSans-SemiBold",
+    fontSize : 16
+  },
+  modalText: {
+    fontFamily: "JosefinSans-Regular",
+    marginBottom: 15,
+    fontSize : 16,
+    textAlign: "center"
+  },
+  modalTitle: {
+    fontFamily: "JosefinSans-SemiBold",
+    fontSize : 18,
+    marginBottom: 15,
+    textAlign: "center"
   }
 });

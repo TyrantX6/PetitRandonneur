@@ -15,8 +15,9 @@ import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 
 
 
-
 export default StoryScreen = ({route}) => {
+
+  console.log('story:', route)
 
   const [storyFeedback, setStoryFeedback] = useState(0);
 
@@ -45,7 +46,7 @@ export default StoryScreen = ({route}) => {
               width: 300,
               height: 250,
             }}
-            source={route.params.cover}
+            uri={route.params.cover}
           />
         </View>
 
