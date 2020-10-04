@@ -77,7 +77,11 @@ export default StoryScreen = ({route}) => {
 
         <Text style={styles.incentive}>Trouve moi si tu peux!</Text>
         <Text style={styles.tale}>{route.params.tale}</Text>
-        <Text style={styles.author}>{author.username}</Text>
+        { author.username?
+          <Text style={styles.author}>{author.username}</Text> :
+          <Text style={styles.author}>Auteur anonyme</Text>
+        }
+
       </ScrollView>
     </SafeAreaView>
 
