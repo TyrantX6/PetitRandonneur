@@ -13,13 +13,38 @@ import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 
 
-
-
 export default StoryScreen = ({route}) => {
 
   console.log('story:', route)
 
+  const [author, setAuthor] = useState([]);
+
   const [storyFeedback, setStoryFeedback] = useState(0);
+
+  const apiUserQuery = 'http://192.168.1.23:8000/users/'.concat(route.params.author);
+
+  console.log(apiUserQuery)
+
+  const getAuthorName = async () => {
+    try {
+      let responseResults = await fetch(apiUserQuery, {
+          method : 'GET'
+        }
+      )
+
+      let jsonResponseResults = await responseResults.json();
+      setAuthor(jsonResponseResults);
+
+    } catch (e) {
+      alert('Problème de connexion au serveur. Impossible de récupérer le nom de l\'auteur.')
+    }
+
+  };
+
+
+  useEffect(() => {
+    getAuthorName();
+  }, []);
 
   return (
 
@@ -36,8 +61,6 @@ export default StoryScreen = ({route}) => {
           }
         </TouchableOpacity>
 
-
-
         <View style={styles.storyCover}>
           <ImageModal
             resizeMode="center"
@@ -52,13 +75,12 @@ export default StoryScreen = ({route}) => {
 
         <Text style={styles.incentive}>Trouve moi si tu peux!</Text>
         <Text style={styles.tale}>{route.params.tale}</Text>
-        <Text style={styles.author}>{route.params.author}</Text>
+        <Text style={styles.author}>{author.username}</Text>
       </ScrollView>
     </SafeAreaView>
 
   );
 };
-
 
 const styles = StyleSheet.create({
   author : {

@@ -192,8 +192,8 @@ export default HomeScreen = ({story, navigation}) => {
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>Bienvenue parmi nous randonneur!</Text>
             <Text style={styles.modalText}>
-              A vous de découvrir nos histoires en cliquant sur les têtes d'épingles oranges, un second clic sur le résumé vous emmènera sur l'histoire.{"\n"}{"\n"}
-              Vous pouvez recentrer la vue sur votre position avec l'icone de cible orange en bas à droite (seulement si vous avez autorisé la localisation).{"\n"}{"\n"}
+              A vous de découvrir nos histoires en cliquant sur les têtes d'épingles oranges. Un second clic sur le résumé vous emmènera sur l'histoire.{"\n"}{"\n"}
+              Vous pouvez recentrer la vue sur votre position avec l'icone de cible en bas à droite (seulement si vous avez autorisé la localisation).{"\n"}{"\n"}
               Merci de créer un compte et/ou de vous connecter avant de pouvoir envoyer des histoires ou les ajouter en favoris.{"\n"}{"\n"}
               Bonne route!
 
