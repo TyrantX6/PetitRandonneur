@@ -23,7 +23,7 @@ export default StoryScreen = ({route}) => {
 
   const apiUserQuery = 'http://192.168.1.23:8000/users/'.concat(route.params.author);
 
-  console.log(apiUserQuery)
+  console.log('cover:', route.params.cover)
 
   const getAuthorName = async () => {
     try {
@@ -69,7 +69,9 @@ export default StoryScreen = ({route}) => {
               width: 300,
               height: 250,
             }}
-            uri={route.params.cover}
+            source={{
+              uri: route.params.cover
+            }}
           />
         </View>
 
