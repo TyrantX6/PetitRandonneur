@@ -22,6 +22,7 @@ const BottomTabNavigator = () => {
         inactiveBackgroundColor : '#43820D',
         activeTintColor : '#fff',
         inactiveTintColor : '#E6E1C5',
+        keyboardHidesTabBar: true,
         style: {
           height: 60
         },

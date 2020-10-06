@@ -1,13 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Dimensions,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
-  View,
   Text,
-  Image,
   TouchableOpacity,
-  ScrollView
+  View,
 } from 'react-native';
+import myConfig from '../myConfig';
+
+import axios from 'axios';
 
 import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
@@ -21,7 +24,7 @@ export default StoryScreen = ({route}) => {
 
   const [storyFeedback, setStoryFeedback] = useState(0);
 
-  const apiUserQuery = 'http://192.168.1.23:8000/users/'.concat(route.params.author);
+  const apiUserQuery = myConfig.API_REQUEST+'appusers/'.concat(route.params.author);
 
   console.log('cover:', route.params.cover)
 
@@ -92,44 +95,46 @@ const styles = StyleSheet.create({
   author : {
     color : '#0C2E06',
     fontFamily: "Kalam-Regular",
-    marginRight : 12,
-    marginBottom : 18,
     fontSize: 16,
+    marginBottom : 18,
+    marginRight : 12,
     textAlign: 'right'
   },
   background : {
-    backgroundColor : '#E6E1C5'
+    backgroundColor : '#E6E1C5',
+    height: (Dimensions.get('window').height),
   },
   favoriteIcon : {
+    paddingVertical: 4,
     textAlign : 'center',
-    paddingVertical: 4
   },
   incentive: {
     color : '#713309',
     fontFamily: "JosefinSans-SemiBold",
     fontSize: 22,
+    paddingTop: 2,
+    paddingBottom : 10,
     textAlign: 'center',
     textDecorationLine : 'underline',
-    paddingTop: 2,
-    paddingBottom : 10
   },
   storyCover: {
-    borderRadius : 5,
     alignSelf : 'center',
+    borderRadius : 5,
   },
   tale: {
     color : 'black',
     fontFamily: "Kalam-Regular",
     fontSize: 16,
+    padding : 16,
     textAlign: 'center',
-    padding : 16
   },
   storyTitle: {
     color : '#0C2E06',
     fontFamily: "JosefinSans-SemiBold",
     fontSize: 22,
+    paddingHorizontal: 6,
+    paddingTop: 12,
     textAlign: 'center',
-    paddingTop: 12
   },
   fact: {
     height : 'auto'

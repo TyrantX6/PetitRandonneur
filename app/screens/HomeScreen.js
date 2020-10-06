@@ -15,6 +15,7 @@ import { PermissionsAndroid } from 'react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconIonic from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
+import myConfig from '../myConfig';
 
 
 
@@ -37,9 +38,10 @@ export default HomeScreen = ({story, navigation}) => {
 
   const [markers, setMarkers] = useState([]);
 
+
   const getStories = async () => {
     try {
-      let responseResults = await fetch('http://192.168.1.23:8000/stories/', {
+      let responseResults = await fetch(myConfig.API_REQUEST+'stories/', {
           method : 'GET'
         }
       )
@@ -113,9 +115,9 @@ export default HomeScreen = ({story, navigation}) => {
     }
   }
 
-  useEffect(() => {
-    getStories();
-  }, []);
+    useEffect(() => {
+      getStories();
+    }, []);
 
   useEffect(() => {
     permissionCheck();
