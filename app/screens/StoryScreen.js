@@ -26,7 +26,7 @@ export default StoryScreen = ({route}) => {
 
   const apiUserQuery = myConfig.API_REQUEST+'appusers/'.concat(route.params.author);
 
-  console.log('cover:', route.params.cover)
+  console.log('AUTHOR:', route.params.author)
 
   const getAuthorName = async () => {
     try {
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   background : {
     backgroundColor : '#E6E1C5',
-    height: (Dimensions.get('window').height),
+    flex :1,
   },
   favoriteIcon : {
     paddingVertical: 4,

@@ -81,7 +81,7 @@ export default HomeScreen = ({story, navigation}) => {
       await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(res => {
         if (res == "granted") {
           setPermissionGranted(true);
-          getLocation();
+          getUserLocation();
         } else {
           requestGPSPermission();
           console.log("Location is not enabled");
@@ -115,9 +115,9 @@ export default HomeScreen = ({story, navigation}) => {
     }
   }
 
-    useEffect(() => {
-      getStories();
-    }, []);
+  useEffect(() => {
+    getStories();
+  }, []);
 
   useEffect(() => {
     permissionCheck();

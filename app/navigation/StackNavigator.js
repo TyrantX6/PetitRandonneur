@@ -1,12 +1,15 @@
-import React from "react";
+import React, {useContext} from "react";
 import { Image, View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import StoryScreen from "../screens/StoryScreen";
+import UserPageScreen from "../screens/UserPageScreen";
+import {UserDataContext} from '../App';
 
 const Stack = createStackNavigator();
+
 
 
 function LogoTitle() {
@@ -22,6 +25,7 @@ function LogoTitle() {
 const MainStackNavigator = () => {
   return (
     <Stack.Navigator>
+
       <Stack.Screen name="HomeScreen"
                     component={HomeScreen}
                     options={{
@@ -45,7 +49,43 @@ const MainStackNavigator = () => {
                       headerTintColor: '#E6E1C5',
                     }}
       />
-      {/*<Stack.Screen name="LoginScreen"
+
+    </Stack.Navigator>
+  );
+}
+
+const LoggedInNavigator = () => {
+
+  const userData = React.useContext(UserDataContext);
+
+  return (
+    <Stack.Navigator>
+
+      <Stack.Screen name="UserPageScreen"
+                    component={UserPageScreen}
+                    options={{
+                      headerTitle: props => <LogoTitle {...props} /> ,
+                      headerTitleAlign : 'center',
+                      headerStyle: {
+                        backgroundColor: '#43820D',
+                        height: 60
+                      },
+                      headerTintColor: '#E6E1C5',
+                    }}
+      />
+
+    </Stack.Navigator>
+  );
+}
+
+const NotLoggedInNavigator = () => {
+
+  const userData = React.useContext(UserDataContext);
+
+  return (
+    <Stack.Navigator>
+
+      <Stack.Screen name="LoginScreen"
                     component={LoginScreen}
                     options={{
                       headerTitle: props => <LogoTitle {...props} /> ,
@@ -56,10 +96,10 @@ const MainStackNavigator = () => {
                       },
                       headerTintColor: '#E6E1C5',
                     }}
-      />*/}
+      />
 
     </Stack.Navigator>
   );
 }
 
-export { MainStackNavigator };
+export { MainStackNavigator, LoggedInNavigator, NotLoggedInNavigator };

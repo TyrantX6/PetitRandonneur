@@ -1,10 +1,11 @@
-import React from "react";
+import React, {useContext} from "react";
 import {TouchableOpacity, View, Text} from "react-native";
-import { MainStackNavigator } from "./StackNavigator";
+import {LoginNavigator, MainStackNavigator, NotLoggedInNavigator, LoggedInNavigator} from './StackNavigator';
 
-import LoginScreen from "../screens/LoginScreen";
+
 import WriteStoryScreen from "../screens/WriteStoryScreen";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import { UserDataContext } from '../App';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -13,6 +14,8 @@ const Tab = createBottomTabNavigator();
 
 
 const BottomTabNavigator = () => {
+
+  const userData = React.useContext(UserDataContext);
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -51,17 +54,30 @@ const BottomTabNavigator = () => {
           )
         }}
       />
-      <Tab.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{
-          tabBarLabel: 'Identification',
-          tabBarIcon: ({ color }) => (
-            <Icon name="person-circle-outline" color={color} size={50} />
-          ),
-        }}
-      />
 
+      {
+        userData.user == null ?
+          <Tab.Screen
+            name="LoginScreen"
+            component={NotLoggedInNavigator}
+            options={{
+              tabBarLabel: 'Identification',
+              tabBarIcon: ({ color }) => (
+                <Icon name="person-circle-outline" color={color} size={50} />
+              ),
+            }}
+          /> :
+          <Tab.Screen
+            name="LoginScreen"
+            component={LoggedInNavigator}
+            options={{
+              tabBarLabel: 'Identification',
+              tabBarIcon: ({ color }) => (
+                <Icon name="person-circle-outline" color={color} size={50} />
+              ),
+            }}
+          />
+      }
 
     </Tab.Navigator>
   );
