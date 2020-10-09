@@ -6,6 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import StoryScreen from "../screens/StoryScreen";
 import UserPageScreen from "../screens/UserPageScreen";
+import UserCollectionScreen from '../screens/UserCollectionScreen'
 import {UserDataContext} from '../App';
 
 const Stack = createStackNavigator();
@@ -60,6 +61,19 @@ const LoggedInNavigator = () => {
 
   return (
     <Stack.Navigator>
+
+      <Stack.Screen name="UserCollectionScreen"
+                    component={UserCollectionScreen}
+                    options={{
+                      headerTitle: props => <LogoTitle {...props} /> ,
+                      headerTitleAlign : 'center',
+                      headerStyle: {
+                        backgroundColor: '#43820D',
+                        height: 60
+                      },
+                      headerTintColor: '#E6E1C5',
+                    }}
+      />
 
       <Stack.Screen name="UserPageScreen"
                     component={UserPageScreen}

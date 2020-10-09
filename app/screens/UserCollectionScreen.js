@@ -13,10 +13,9 @@ import { UserDataContext } from '../App'
 import axios from 'axios';
 import myConfig from '../myConfig';
 import IconIonic from 'react-native-vector-icons/Ionicons';
-import IconEntypo from 'react-native-vector-icons/Entypo';
 
 
-export default UserPageScreen = ({navigation}) => {
+export default UserCollectionScreen = ({navigation}) => {
 
 
   const userData = React.useContext(UserDataContext);
@@ -30,8 +29,8 @@ export default UserPageScreen = ({navigation}) => {
     userData.setUser(null);
   };
 
-  const changePassword = () => {
-
+  const getPublishedStories = () => {
+    //http://192.168.1.50:8000/stories/?author=Arandeira
   };
 
   return (
@@ -39,21 +38,19 @@ export default UserPageScreen = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.accountSection}>
-          <Text style={styles.accountTitle}>Mon compte</Text>
-          <Text style={styles.accountData}>Mon pseudo : {userData.user.username}</Text>
-          <Text style={styles.accountData}>Mon email : {userData.user.email}</Text>
+          <Text style={styles.accountTitle}>Mes collections</Text>
+          <Text style={styles.accountData}>Mes histoires mises en favories:</Text>
+          {
+            userData.user.favorites.length < 1 ?
+              <Text>Vous n'avez pas encore d'histoires favories. Ajoutez-en en cliquant sur le coeur orange quand vous êtes sur la page d'une histoire.</Text>
+              :
+              <Text>Histoire 1</Text>
+          }
 
-          <Text style={styles.accountSectionSubhead}>Voir mes collections:</Text>
-          <TouchableOpacity
-            style={styles.collectionLink}
-            onPress={() => navigation.navigate('UserCollectionScreen')}
-          >
-            <IconEntypo style={styles.collectionLinkButtonIcon} name="open-book" color={'#E6E1C5'} size={46}/>
-          </TouchableOpacity>
+          <Text style={styles.accountData}>Mes histoires publiées</Text>
 
-
-          <View style={styles.changePasswordSection}>
-            <Text style={styles.changePasswordSectionTitle}>Changement mot de passe</Text>
+          <View style={styles.passwordSection}>
+            <Text style={styles.passwordSectionTitle}>Changement mot de passe</Text>
             <TextInput style={styles.oldPasswordField}
                        onChangeText={setOldPassword}
                        placeholder = {'✍️ ancien mot de passe'}
@@ -61,7 +58,7 @@ export default UserPageScreen = ({navigation}) => {
                        secureTextEntry={true}
                        value={oldPassword}
             />
-            <View style={styles.changePasswordWrapper}>
+            <View style={styles.passwordWrapper}>
               <TextInput style={styles.newPasswordFields}
                          onChangeText={setInputPassword}
                          placeholder = {'✍️ nouveau'}
@@ -77,13 +74,13 @@ export default UserPageScreen = ({navigation}) => {
                          value={inputPasswordCheck}
               />
 
-          </View>
-            <Text style={styles.changePasswordSectionSubhead}> Envoyer :</Text>
+            </View>
+            <Text style={styles.passwordSectionSubhead}> Envoyer :</Text>
             <TouchableOpacity
               style={styles.changePasswordButton}
               onPress={changePassword}
             >
-              <IconIonic style={styles.changePasswordButtonIcon} name="push-outline" color={'#0C2E06'} size={40}/>
+              <IconIonic style={styles.changePasswordButtonText} name="push-outline" color={'#0C2E06'} size={40}/>
             </TouchableOpacity>
 
           </View>
@@ -113,19 +110,13 @@ const styles = StyleSheet.create({
   accountSection : {
     width: (Dimensions.get('window').width),
   },
-  accountSectionSubhead : {
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 20,
-    textAlign: 'center',
-    textDecorationLine: 'underline'
-  },
   accountTitle : {
     color: '#0C2E06',
     fontFamily: "JosefinSans-Regular",
     fontSize : 22,
     padding: 8,
     textAlign: 'center',
-    marginBottom : 4,
+    marginBottom : 8,
   },
   changePasswordButton: {
     alignSelf: "center",
@@ -133,53 +124,14 @@ const styles = StyleSheet.create({
     borderRadius : 25,
     marginVertical : 8,
     width : '22%'
+
   },
-  changePasswordButtonIcon : {
+  changePasswordButtonText : {
     color : '#2CA6A4',
     paddingTop: 6,
     textAlign : 'center',
     paddingVertical: 2
-  },
-  changePasswordSection : {
-    backgroundColor : '#695958',
-    borderBottomWidth : 2,
-    borderBottomColor : '#FF8811',
-    borderTopColor: '#FF8811',
-    borderTopWidth : 2,
-    elevation : 15,
-    paddingVertical : 12,
-  },
-  changePasswordSectionSubhead : {
-    color: '#E6E1C5',
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 20,
-    textAlign: 'center',
-  },
-  changePasswordSectionTitle : {
-    color: '#E6E1C5',
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 22,
-    padding: 8,
-    marginBottom : 8,
-    textAlign: 'center',
-  },
-  changePasswordWrapper : {
-    flexDirection : 'row',
-    justifyContent: 'space-evenly'
-  },
-  collectionLink: {
-    alignSelf: "center",
-    backgroundColor : "#43820D",
-    borderRadius : 25,
-    marginBottom : 12,
-    marginTop : 8,
-    width : '22%',
-  },
-  collectionLinkButtonIcon: {
-    color : '#E6E1C5',
-    paddingTop: 4,
-    paddingVertical: 2,
-    textAlign : 'center',
+
   },
   container: {
     flex: 1,
@@ -220,6 +172,33 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     textAlign : 'center',
     width: '80%',
+  },
+  passwordSection : {
+    backgroundColor : '#43820D',
+    borderBottomWidth : 2,
+    borderBottomColor : '#FF8811',
+    borderTopColor: '#FF8811',
+    borderTopWidth : 2,
+    elevation : 15,
+    paddingVertical : 12,
+  },
+  passwordSectionSubhead : {
+    color: '#E6E1C5',
+    fontFamily: "JosefinSans-Regular",
+    fontSize : 20,
+    textAlign: 'center',
+  },
+  passwordSectionTitle : {
+    color: '#E6E1C5',
+    fontFamily: "JosefinSans-Regular",
+    fontSize : 22,
+    padding: 8,
+    marginBottom : 8,
+    textAlign: 'center',
+  },
+  passwordWrapper : {
+    flexDirection : 'row',
+    justifyContent: 'space-evenly'
   },
 
 

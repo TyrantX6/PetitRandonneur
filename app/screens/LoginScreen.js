@@ -16,8 +16,8 @@ import myConfig from '../myConfig';
 
 export default LoginScreen = ({navigation}) => {
   // states used for authentification
-  const [inputUsernameConnect, setInputUsernameConnect] = useState('');
-  const [inputPasswordConnect, setInputPasswordConnect] = useState('');
+  const [inputUsernameConnect, setInputUsernameConnect] = useState('Arandeira');
+  const [inputPasswordConnect, setInputPasswordConnect] = useState('grenouille');
   const [connectToken, setConnectToken] = useState('');
 
   // states used for registration
@@ -93,6 +93,7 @@ export default LoginScreen = ({navigation}) => {
       <ScrollView>
         {/* top section, authentification */}
         <View style={styles.topSection}>
+          <Text style={styles.topTitle}>Se connecter</Text>
           <TextInput style={styles.topFields}
                      multiline={true}
                      onChangeText={setInputUsernameConnect}
@@ -194,7 +195,6 @@ const styles = StyleSheet.create({
     fontSize : 24,
     marginVertical: 20,
     textAlign: "center",
-    paddingHorizontal: 70
   },
   connectButton: {
     alignItems: "center",
@@ -207,13 +207,15 @@ const styles = StyleSheet.create({
     fontSize : 20,
     fontFamily: "JosefinSans-Regular",
     padding : 15,
-    color : '#E6E1C5'
+    color : '#E6E1C5',
+    textAlign: 'center',
   },
   container: {
+    alignItems: "center",
+    backgroundColor : "#E6E1C5",
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor : "#E6E1C5"
+
   },
   sendButton: {
     alignItems: "center",
@@ -226,6 +228,7 @@ const styles = StyleSheet.create({
     fontFamily: "JosefinSans-Regular",
     fontSize : 20,
     padding : 15,
+    textAlign: 'center',
   },
   topFields: {
     backgroundColor:'#2CA6A4',
@@ -236,12 +239,20 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     textAlign : 'center',
     width: '80%',
-
   },
   topSection : {
     alignItems: "center",
     marginVertical : 16,
     width: (Dimensions.get('window').width),
+  },
+  topTitle: {
+    alignItems: "center",
+    color : "#005554",
+    fontFamily: "JosefinSans-Regular",
+    fontSize : 24,
+    marginBottom: 20,
+    marginTop: 6,
+    textAlign: "center",
   },
 
 });

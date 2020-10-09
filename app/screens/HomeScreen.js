@@ -16,6 +16,7 @@ import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconIonic from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
 import myConfig from '../myConfig';
+import axios from 'axios';
 
 
 
@@ -40,20 +41,15 @@ export default HomeScreen = ({story, navigation}) => {
 
 
   const getStories = async () => {
-    try {
-      let responseResults = await fetch(myConfig.API_REQUEST+'stories/', {
-          method : 'GET'
-        }
-      )
-
-      let jsonResponseResults = await responseResults.json();
-      setMarkers(jsonResponseResults);
-      console.log('response results:', markers)
-    } catch (e) {
-      console.log('response results:', markers)
-      alert('Problème de connexion au serveur. Les histoires n\'apparaitront pas.')
-    }
-
+    await axios.get(myConfig.API_REQUEST+'stories/?validated=true' )
+      .then(function (response) {
+        setMarkers(response.data);
+        console.log('response results:', markers)
+      })
+      .catch(function (error) {
+        console.log('response results:', markers)
+        alert('Problème de connexion au serveur. Les histoires n\'apparaitront pas.');
+      });
   };
 
   const getUserLocation = () => {
@@ -220,6 +216,8 @@ export default HomeScreen = ({story, navigation}) => {
         region={region}
         onRegionChangeComplete={region =>setRegion(region)}
         showsUserLocation = {true}
+        showsBuildings = {true}
+        showsMyLocationButton = {false}
         ref={mapView}
       >
         {mapMarkers}
