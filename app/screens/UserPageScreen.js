@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {
+  Alert,
   Text,
   TextInput,
   Dimensions,
@@ -13,7 +14,9 @@ import { UserDataContext } from '../App'
 import axios from 'axios';
 import myConfig from '../myConfig';
 import IconIonic from 'react-native-vector-icons/Ionicons';
+
 import IconEntypo from 'react-native-vector-icons/Entypo';
+import IconFA from 'react-native-vector-icons/FontAwesome5';
 
 
 export default UserPageScreen = ({navigation}) => {
@@ -26,11 +29,69 @@ export default UserPageScreen = ({navigation}) => {
 
   console.log('user DATA:', userData);
 
+  const data = {
+    "user": userData.user
+  }
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + userData.user.tokens.access
+  }
+
+
   const logout = () => {
     userData.setUser(null);
   };
 
-  const changePassword = () => {
+  const deleteConfirm = () => {
+    Alert.alert(
+      'Confirmez-vous la demande de suppression de votre compte?',
+      'Êtes-vous sûr et certain de vouloir supprimer votre compte, vous perdrez la possibilité de vous connecter et vos favoris. Les histoires que vous avez écrites resteront mais votre nom sera remplacé par "Auteur Anonyme".',
+      [
+        {
+          text: 'Annulation',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        },
+        { text: 'Confirmation',
+          onPress: () => deleteAccount()
+        }
+      ]
+    );
+  };
+
+  const deleteAccount = async () => {
+    await axios.delete(myConfig.API_REQUEST+'appusers/'+ userData.user.username +'/'
+      , data, {
+        headers: headers
+      })
+      .then(function (response) {
+        userData.setUser(null);
+        navigation.navigate('HomeScreen');
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        alert('La suppression ne s\'est pas bien déroulée. Ré-essayez plus tard.')
+      });
+
+  }
+
+  const changePassword = async () => {
+    if (inputPassword === inputPasswordCheck) {
+      await axios.put(myConfig.API_REQUEST+'appusers/'+ userData.user.username +'/'
+        , {password : setInputPassword}, {
+          headers: headers
+        })
+        .then(function (response) {
+          alert('Correctement effectué.')
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          alert('Problème avec la procédure')
+        });
+    } else {
+      alert('Les deux mots de passe ne correspondent pas entre eux. Merci de les corriger avant de ré-essayer.')
+    }
 
   };
 
@@ -43,17 +104,10 @@ export default UserPageScreen = ({navigation}) => {
           <Text style={styles.accountData}>Mon pseudo : {userData.user.username}</Text>
           <Text style={styles.accountData}>Mon email : {userData.user.email}</Text>
 
-          <Text style={styles.accountSectionSubhead}>Voir mes collections:</Text>
-          <TouchableOpacity
-            style={styles.collectionLink}
-            onPress={() => navigation.navigate('UserCollectionScreen')}
-          >
-            <IconEntypo style={styles.collectionLinkButtonIcon} name="open-book" color={'#E6E1C5'} size={46}/>
-          </TouchableOpacity>
-
 
           <View style={styles.changePasswordSection}>
             <Text style={styles.changePasswordSectionTitle}>Changement mot de passe</Text>
+
             <TextInput style={styles.oldPasswordField}
                        onChangeText={setOldPassword}
                        placeholder = {'✍️ ancien mot de passe'}
@@ -61,6 +115,8 @@ export default UserPageScreen = ({navigation}) => {
                        secureTextEntry={true}
                        value={oldPassword}
             />
+
+
             <View style={styles.changePasswordWrapper}>
               <TextInput style={styles.newPasswordFields}
                          onChangeText={setInputPassword}
@@ -87,13 +143,20 @@ export default UserPageScreen = ({navigation}) => {
             </TouchableOpacity>
 
           </View>
-
-          <TouchableOpacity
+          <View style={styles.accountManagement}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={deleteConfirm}
+            >
+              <Text style={styles.buttonText}>Suppression</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
             style={styles.logoutButton}
             onPress={logout}
           >
-            <Text style={styles.logoutButtonText}>Déconnexion</Text>
+            <Text style={styles.buttonText}>Déconnexion</Text>
           </TouchableOpacity>
+          </View>
 
         </View>
       </ScrollView>
@@ -109,6 +172,10 @@ const styles = StyleSheet.create({
     fontFamily: "JosefinSans-Regular",
     fontSize : 16,
     padding : 15
+  },
+  accountManagement: {
+    flexDirection : 'row',
+    justifyContent : 'space-around'
   },
   accountSection : {
     width: (Dimensions.get('window').width),
@@ -127,6 +194,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom : 4,
   },
+  buttonText : {
+    fontFamily: "JosefinSans-Regular",
+    fontSize : 20,
+    padding : 15,
+    textAlign: 'center',
+  },
   changePasswordButton: {
     alignSelf: "center",
     backgroundColor : '#005554',
@@ -141,7 +214,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2
   },
   changePasswordSection : {
-    backgroundColor : '#695958',
+    backgroundColor : '#43820D',
     borderBottomWidth : 2,
     borderBottomColor : '#FF8811',
     borderTopColor: '#FF8811',
@@ -187,18 +260,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor : "#E6E1C5"
   },
+  deleteButton: {
+    alignSelf: "center",
+    backgroundColor: "red",
+    borderRadius:30,
+    marginVertical : 16,
+    width: '40%',
+  },
+  fieldContainer :{
+    flexDirection: 'row'
+  },
   logoutButton: {
     alignSelf: "center",
     backgroundColor: "#FF8811",
     borderRadius:30,
     marginVertical : 16,
     width: '40%',
-  },
-  logoutButtonText : {
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 20,
-    padding : 15,
-    textAlign: 'center',
   },
   newPasswordFields: {
     backgroundColor:'#2CA6A4',

@@ -3,97 +3,139 @@ import {
   Text,
   TextInput,
   Dimensions,
+  FlatList,
   ScrollView,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { UserDataContext } from '../App'
 import axios from 'axios';
 import myConfig from '../myConfig';
-import IconIonic from 'react-native-vector-icons/Ionicons';
+import LottieView from 'lottie-react-native';
+import IconFA from 'react-native-vector-icons/FontAwesome5';
+import StoryComponent from '../components/StoryComponent';
 
 
 export default UserCollectionScreen = ({navigation}) => {
 
-
   const userData = React.useContext(UserDataContext);
-  const [oldPassword, setOldPassword] = useState('');
-  const [inputPassword, setInputPassword] = useState('');
-  const [inputPasswordCheck, setInputPasswordCheck] = useState('');
 
-  console.log('user DATA:', userData);
+  //intermediates states
+  const [userStories, setUserStories] = useState([]);
+  const [favStories, setFavStories] = useState();
 
-  const logout = () => {
-    userData.setUser(null);
+  //loading states
+  const [ loadingPub, setLoadingPub ] = useState(true);
+  const [ loadingFav, setLoadingFav ] = useState(true);
+
+  useEffect(() => {
+    getPublishedStories();
+    getFavoritesStories();
+  }, []);
+
+  const windowWidth = useWindowDimensions().width;
+  const windowHeight = useWindowDimensions().height;
+
+  const getPublishedStories = async () => {
+    // url model for the filtered queries http://192.168.1.50:8000/stories/?author=Arandeira
+    await axios.get(myConfig.API_REQUEST+'stories/?author='+ userData.user.username )
+      .then(function (response) {
+        setUserStories(response.data);
+        setLoadingPub(false);
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        alert('Problème avec la recherche d\'histoires dans vos collections, merci de rééssayer plus tard.')
+      });
   };
 
-  const getPublishedStories = () => {
-    //http://192.168.1.50:8000/stories/?author=Arandeira
+  let publishedStoriesRender;
+
+  if (userStories.length < 1) {
+    publishedStoriesRender = <Text style={styles.tipsForUser}>Vos histoires n'ont pas encore été publiées, continuez d'en proposer ou bien profitez simplement des histoires existantes.</Text>
+  } else {
+    publishedStoriesRender =
+      <FlatList
+        data={userStories}
+        renderItem={({item}) => <StoryComponent id = {item.id}
+                                                title = {item.title}
+                                                excerpt = {item.excerpt}
+                                                tale = {item.tale}
+                                                cover = {item.cover}
+                                                author = {item.author}/>}
+        keyExtractor={item => item.id.toString()}
+        style={styles.flatListContainer}
+      />
+  }
+
+
+  const getFavoritesStories = async () => {
+     await setFavStories(userData.user.favorites)
+    setLoadingFav(false)
   };
+
+
+  let favoritesStoriesRender;
+
+  if (userData.user.favorites.length < 1) {
+    favoritesStoriesRender =  <Text style={styles.tipsForUser}>Vous n'avez pas encore d'histoires favories. Ajoutez-en en cliquant sur le coeur orange quand vous êtes sur la page d'une histoire!</Text>
+  } else {
+    favoritesStoriesRender =
+
+      <FlatList
+        data={favStories}
+        renderItem={({item}) => <StoryComponent id = {item.id}
+                                                title = {item.title}
+                                                excerpt = {item.excerpt}
+                                                tale = {item.tale}
+                                                cover = {item.cover}
+                                                author = {item.author}/>}
+        keyExtractor={item => item.id.toString()}
+        style={styles.flatListContainer}
+      />
+  }
+
+
+
 
   return (
 
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.accountSection}>
-          <Text style={styles.accountTitle}>Mes collections</Text>
-          <Text style={styles.accountData}>Mes histoires mises en favories:</Text>
-          {
-            userData.user.favorites.length < 1 ?
-              <Text>Vous n'avez pas encore d'histoires favories. Ajoutez-en en cliquant sur le coeur orange quand vous êtes sur la page d'une histoire.</Text>
+
+      <TouchableOpacity style = {styles.settingsScreenButton} onPress = {() => {
+        navigation.navigate('UserPageScreen')
+      }}>
+          <IconFA name="tools" color={'#FF8811'} size={30}/>
+      </TouchableOpacity>
+
+        <View style={styles.collectionSection}>
+          <Text style={styles.collectionTitle}>Mes collections</Text>
+          <View style={styles.collectionSubSection}>
+            <Text style={styles.collectionSubhead}>Mes histoires préférées:</Text>
+
+            { loadingFav ?
+              <LottieView style={styles.smallLoader} source={require('../assets/animations/8442-load-rappi.json')} autoPlay loop />
               :
-              <Text>Histoire 1</Text>
-          }
-
-          <Text style={styles.accountData}>Mes histoires publiées</Text>
-
-          <View style={styles.passwordSection}>
-            <Text style={styles.passwordSectionTitle}>Changement mot de passe</Text>
-            <TextInput style={styles.oldPasswordField}
-                       onChangeText={setOldPassword}
-                       placeholder = {'✍️ ancien mot de passe'}
-                       placeholderTextColor="#E6E1C5"
-                       secureTextEntry={true}
-                       value={oldPassword}
-            />
-            <View style={styles.passwordWrapper}>
-              <TextInput style={styles.newPasswordFields}
-                         onChangeText={setInputPassword}
-                         placeholder = {'✍️ nouveau'}
-                         placeholderTextColor="#0C2E06"
-                         secureTextEntry={true}
-                         value={inputPassword}
-              />
-              <TextInput style={styles.newPasswordFields}
-                         onChangeText={setInputPasswordCheck}
-                         placeholder = {'✍️ confirmez-le'}
-                         placeholderTextColor="#0C2E06"
-                         secureTextEntry={true}
-                         value={inputPasswordCheck}
-              />
-
-            </View>
-            <Text style={styles.passwordSectionSubhead}> Envoyer :</Text>
-            <TouchableOpacity
-              style={styles.changePasswordButton}
-              onPress={changePassword}
-            >
-              <IconIonic style={styles.changePasswordButtonText} name="push-outline" color={'#0C2E06'} size={40}/>
-            </TouchableOpacity>
-
+              favoritesStoriesRender
+            }
           </View>
 
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={logout}
-          >
-            <Text style={styles.logoutButtonText}>Déconnexion</Text>
-          </TouchableOpacity>
+
+          <View style={styles.collectionSubSection}>
+            <Text style={styles.collectionSubhead}>Mes histoires publiées:</Text>
+
+            { loadingPub ?
+              <LottieView style={styles.smallLoader} source={require('../assets/animations/8442-load-rappi.json')} autoPlay loop />
+              :
+              publishedStoriesRender
+            }
+          </View>
 
         </View>
-      </ScrollView>
+
     </SafeAreaView>
   );
 
@@ -101,16 +143,21 @@ export default UserCollectionScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-  accountData: {
+  collectionSubSection : {
+    height: '44%',
+  },
+  collectionSubhead: {
     color: '#0C2E06',
     fontFamily: "JosefinSans-Regular",
     fontSize : 16,
-    padding : 15
+    padding : 15,
+    width: '90%',
+    alignSelf :'center',
   },
-  accountSection : {
+  collectionSection : {
     width: (Dimensions.get('window').width),
   },
-  accountTitle : {
+  collectionTitle : {
     color: '#0C2E06',
     fontFamily: "JosefinSans-Regular",
     fontSize : 22,
@@ -118,88 +165,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom : 8,
   },
-  changePasswordButton: {
-    alignSelf: "center",
-    backgroundColor : '#005554',
-    borderRadius : 25,
-    marginVertical : 8,
-    width : '22%'
-
-  },
-  changePasswordButtonText : {
-    color : '#2CA6A4',
-    paddingTop: 6,
-    textAlign : 'center',
-    paddingVertical: 2
-
-  },
   container: {
+    alignItems: "center",
+    backgroundColor : "#E6E1C5",
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor : "#E6E1C5"
+    paddingBottom : 34,
   },
-  logoutButton: {
-    alignSelf: "center",
-    backgroundColor: "#FF8811",
-    borderRadius:30,
-    marginVertical : 16,
-    width: '40%',
+  flatListContainer: {
+    backgroundColor: '#DAD3A9',
+    elevation : 5,
   },
-  logoutButtonText : {
+  settingsScreenButton : {
+    backgroundColor: '#F8E8D5',
+    borderColor:'#FF8811',
+    borderRadius: 5,
+    borderWidth:3,
+    padding: 8,
+    position: 'absolute',
+    right : 16,
+    top: 16,
+    zIndex : 1
+  },
+  smallLoader : {
+    alignSelf: 'center',
+    width: 100,
+  },
+  tipsForUser : {
     fontFamily: "JosefinSans-Regular",
-    fontSize : 20,
+    fontSize : 14,
     padding : 15,
     textAlign: 'center',
-  },
-  newPasswordFields: {
-    backgroundColor:'#2CA6A4',
-    borderRadius:30,
-    color: '#E6E1C5',
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 15,
-    marginVertical: 6,
-    textAlign : 'center',
-    width: '36%',
-  },
-  oldPasswordField: {
-    alignSelf: 'center',
-    backgroundColor:'#005554',
-    borderRadius:30,
-    color: '#005554',
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 18,
-    marginVertical: 6,
-    textAlign : 'center',
-    width: '80%',
-  },
-  passwordSection : {
-    backgroundColor : '#43820D',
-    borderBottomWidth : 2,
-    borderBottomColor : '#FF8811',
-    borderTopColor: '#FF8811',
-    borderTopWidth : 2,
-    elevation : 15,
-    paddingVertical : 12,
-  },
-  passwordSectionSubhead : {
-    color: '#E6E1C5',
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 20,
-    textAlign: 'center',
-  },
-  passwordSectionTitle : {
-    color: '#E6E1C5',
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 22,
-    padding: 8,
-    marginBottom : 8,
-    textAlign: 'center',
-  },
-  passwordWrapper : {
-    flexDirection : 'row',
-    justifyContent: 'space-evenly'
-  },
+    backgroundColor: '#F8E8D5',
+    borderRadius: 5
+  }
 
 
 

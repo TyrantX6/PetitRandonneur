@@ -72,6 +72,7 @@ export default LoginScreen = ({navigation}) => {
       })
         .then(function (response) {
           console.log(response);
+          alert("Votre compte a bien été créé, connectez-vous en remplissant les champs plus haut dans la page.")
         })
         .catch(function (error) {
           console.log(error.response);
@@ -81,10 +82,6 @@ export default LoginScreen = ({navigation}) => {
       alert('Les mots de passe ne correspondent pas.')
     }
   };
-
-
-
-
 
 
   return (

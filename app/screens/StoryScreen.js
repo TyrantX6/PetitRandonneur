@@ -12,8 +12,11 @@ import myConfig from '../myConfig';
 
 import axios from 'axios';
 
+const userData = React.useContext(UserDataContext);
+
 import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
+import {UserDataContext} from '../App';
 
 
 export default StoryScreen = ({route}) => {
