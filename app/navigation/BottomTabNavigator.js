@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
-import {TouchableOpacity, View, Text} from "react-native";
-import {LoginNavigator, MainStackNavigator, NotLoggedInNavigator, LoggedInNavigator} from './StackNavigator';
+
+import {MainStackNavigator, NotLoggedInNavigator, LoggedInNavigator} from './StackNavigator';
 
 
 import WriteStoryScreen from "../screens/WriteStoryScreen";
@@ -10,12 +10,15 @@ import { UserDataContext } from '../App';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Tab = createBottomTabNavigator();
+
 
 
 const BottomTabNavigator = () => {
 
-  const userData = React.useContext(UserDataContext);
+  const userData = useContext(UserDataContext);
+
+  const Tab = createBottomTabNavigator();
+
   return (
     <Tab.Navigator
       initialRouteName="Home"

@@ -10,9 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { UserDataContext } from '../App'
+import { UserDataContext } from '../App';
 import axios from 'axios';
 import myConfig from '../myConfig';
+
 import IconIonic from 'react-native-vector-icons/Ionicons';
 
 import IconEntypo from 'react-native-vector-icons/Entypo';
@@ -22,7 +23,8 @@ import IconFA from 'react-native-vector-icons/FontAwesome5';
 export default UserPageScreen = ({navigation}) => {
 
 
-  const userData = React.useContext(UserDataContext);
+  const userData = useContext(UserDataContext);
+
   const [oldPassword, setOldPassword] = useState('');
   const [inputPassword, setInputPassword] = useState('');
   const [inputPasswordCheck, setInputPasswordCheck] = useState('');
@@ -66,7 +68,7 @@ export default UserPageScreen = ({navigation}) => {
         headers: headers
       })
       .then(function (response) {
-        userData.setUser(null);
+        logout();
         navigation.navigate('HomeScreen');
       })
       .catch(function (error) {
@@ -298,8 +300,5 @@ const styles = StyleSheet.create({
     textAlign : 'center',
     width: '80%',
   },
-
-
-
 
 });

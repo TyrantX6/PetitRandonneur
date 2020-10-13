@@ -12,7 +12,7 @@ import myConfig from '../myConfig';
 
 import axios from 'axios';
 
-const userData = React.useContext(UserDataContext);
+
 
 import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
@@ -20,6 +20,8 @@ import {UserDataContext} from '../App';
 
 
 export default StoryScreen = ({route}) => {
+
+  const userData = React.useContext(UserDataContext);
 
   console.log('story:', route)
 
@@ -32,18 +34,15 @@ export default StoryScreen = ({route}) => {
   console.log('AUTHOR:', route.params.author)
 
   const getAuthorName = async () => {
-    try {
-      let responseResults = await fetch(apiUserQuery, {
-          method : 'GET'
-        }
-      )
 
-      let jsonResponseResults = await responseResults.json();
-      setAuthor(jsonResponseResults);
-
-    } catch (e) {
-      alert('Problème de connexion au serveur. Impossible de récupérer le nom de l\'auteur.')
-    }
+      await axios.get(apiUserQuery)
+        .then(function (response) {
+         setAuthor(response.data);
+      })
+        .catch(function (error) {
+          console.log(error.response);
+          alert('Problème de connexion au serveur. Impossible de récupérer le nom de l\'auteur.')
+        });
 
   };
 

@@ -16,8 +16,6 @@ export default StoryComponent = story => {
 
   const navigation = useNavigation();
 
-
-
   return (
 
     <View style={styles.storyComponent}>

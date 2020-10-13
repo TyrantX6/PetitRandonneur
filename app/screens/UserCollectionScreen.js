@@ -8,10 +8,9 @@ import {
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
-import { UserDataContext } from '../App'
+import { UserDataContext } from '../App';
 import axios from 'axios';
 import myConfig from '../myConfig';
 import LottieView from 'lottie-react-native';
@@ -21,9 +20,9 @@ import StoryComponent from '../components/StoryComponent';
 
 export default UserCollectionScreen = ({navigation}) => {
 
-  const userData = React.useContext(UserDataContext);
+  const userData = useContext(UserDataContext);
 
-  //intermediates states
+  //data states
   const [userStories, setUserStories] = useState([]);
   const [favStories, setFavStories] = useState();
 
@@ -36,8 +35,6 @@ export default UserCollectionScreen = ({navigation}) => {
     getFavoritesStories();
   }, []);
 
-  const windowWidth = useWindowDimensions().width;
-  const windowHeight = useWindowDimensions().height;
 
   const getPublishedStories = async () => {
     // url model for the filtered queries http://192.168.1.50:8000/stories/?author=Arandeira
@@ -199,8 +196,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8E8D5',
     borderRadius: 5
   }
-
-
-
 
 });

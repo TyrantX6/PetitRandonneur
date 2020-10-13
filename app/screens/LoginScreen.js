@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Text,
   TextInput,
@@ -14,7 +14,12 @@ import axios from 'axios';
 import myConfig from '../myConfig';
 
 
+
+
 export default LoginScreen = ({navigation}) => {
+
+  const userData = React.useContext(UserDataContext);
+
   // states used for authentification
   const [inputUsernameConnect, setInputUsernameConnect] = useState('Arandeira');
   const [inputPasswordConnect, setInputPasswordConnect] = useState('grenouille');
@@ -29,7 +34,6 @@ export default LoginScreen = ({navigation}) => {
   //general states
   const [loading, setLoading] = useState(true)
 
-  const userData = React.useContext(UserDataContext);
 
   useEffect(() => {
     console.log(inputEmail);

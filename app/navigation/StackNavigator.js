@@ -6,7 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import StoryScreen from "../screens/StoryScreen";
 import UserPageScreen from "../screens/UserPageScreen";
-import UserCollectionScreen from '../screens/UserCollectionScreen'
+import UserCollectionScreen from '../screens/UserCollectionScreen';
 import {UserDataContext} from '../App';
 
 const Stack = createStackNavigator();
@@ -57,7 +57,7 @@ const MainStackNavigator = () => {
 
 const LoggedInNavigator = () => {
 
-  const userData = React.useContext(UserDataContext);
+  const userData = useContext(UserDataContext);
 
   return (
     <Stack.Navigator>
@@ -94,7 +94,7 @@ const LoggedInNavigator = () => {
 
 const NotLoggedInNavigator = () => {
 
-  const userData = React.useContext(UserDataContext);
+  const userData = useContext(UserDataContext);
 
   return (
     <Stack.Navigator>
