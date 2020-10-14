@@ -47,8 +47,35 @@ export default StoryScreen = ({route}) => {
   };
 
 
+
+  let dynamicHeartIcon;
+  if (userData.user === null){
+    dynamicHeartIcon = <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#A0A0A0'} size={50} />
+  } else {
+    dynamicHeartIcon = <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#FF8811'} size={50} />
+  }
+
+
+  const checkFeedbackOnStory = () => {
+    if(userData.user === null) {
+      setStoryFeedback(0);
+    } else {
+
+    }
+
+  }
+
+  const sendFeedbackToDatabase = () => {
+    if(userData.user === null) {
+      alert('Merci de vous connecter avant d\'enregistrer une histoire en favori.')
+    } else {
+      setStoryFeedback(1);
+    }
+  }
+
   useEffect(() => {
     getAuthorName();
+    checkFeedbackOnStory();
   }, []);
 
   return (
@@ -58,10 +85,10 @@ export default StoryScreen = ({route}) => {
         <Text style={styles.storyTitle}>{route.params.title}</Text>
 
         <TouchableOpacity
-          onPress={()=>   setStoryFeedback(1)}
+          onPress={() => sendFeedbackToDatabase()}
         >
           {storyFeedback === 0 ?
-            <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#FF8811'} size={50} />:
+            dynamicHeartIcon:
             <IconMaterial style={styles.favoriteIcon} name="favorite" color={'#FF8811'} size={50} />
           }
         </TouchableOpacity>

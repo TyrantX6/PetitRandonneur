@@ -8,6 +8,7 @@ import StoryScreen from "../screens/StoryScreen";
 import UserPageScreen from "../screens/UserPageScreen";
 import UserCollectionScreen from '../screens/UserCollectionScreen';
 import {UserDataContext} from '../App';
+import WriteStoryScreen from '../screens/WriteStoryScreen';
 
 const Stack = createStackNavigator();
 
@@ -57,7 +58,6 @@ const MainStackNavigator = () => {
 
 const LoggedInNavigator = () => {
 
-  const userData = useContext(UserDataContext);
 
   return (
     <Stack.Navigator>
@@ -94,8 +94,6 @@ const LoggedInNavigator = () => {
 
 const NotLoggedInNavigator = () => {
 
-  const userData = useContext(UserDataContext);
-
   return (
     <Stack.Navigator>
 
@@ -116,4 +114,27 @@ const NotLoggedInNavigator = () => {
   );
 }
 
-export { MainStackNavigator, LoggedInNavigator, NotLoggedInNavigator };
+
+const WritingNavigator = () => {
+
+  return (
+    <Stack.Navigator>
+
+      <Stack.Screen name="LoginScreen"
+                    component={WriteStoryScreen}
+                    options={{
+                      headerTitle: props => <LogoTitle {...props} /> ,
+                      headerTitleAlign : 'center',
+                      headerStyle: {
+                        backgroundColor: '#43820D',
+                        height: 60
+                      },
+                      headerTintColor: '#E6E1C5',
+                    }}
+      />
+
+    </Stack.Navigator>
+  );
+}
+
+export { MainStackNavigator, LoggedInNavigator, NotLoggedInNavigator, WritingNavigator };

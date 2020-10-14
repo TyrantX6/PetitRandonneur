@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 
-import {MainStackNavigator, NotLoggedInNavigator, LoggedInNavigator} from './StackNavigator';
+import {MainStackNavigator, NotLoggedInNavigator, LoggedInNavigator, WritingNavigator} from './StackNavigator';
 
 
 import WriteStoryScreen from "../screens/WriteStoryScreen";
@@ -37,7 +37,7 @@ const BottomTabNavigator = () => {
     >
       <Tab.Screen
         name="WriteStoryScreen"
-        component={WriteStoryScreen}
+        component={WritingNavigator}
         options={{
           tabBarLabel: 'Suggérer',
           tabBarIcon: ({ color }) => (

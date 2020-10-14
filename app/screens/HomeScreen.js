@@ -199,12 +199,12 @@ export default HomeScreen = ({story, navigation}) => {
             </Text>
 
             <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#43820D" }}
+              style={{ ...styles.okButton }}
               onPress={() => {
                 setModalVisible(!modalVisible);
               }}
             >
-              <Text style={styles.textStyle}>OK</Text>
+              <Text style={styles.okText}>OK</Text>
             </TouchableHighlight>
           </View>
         </View>
@@ -246,20 +246,16 @@ export default HomeScreen = ({story, navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  bigLoader : {
+    width: 200,
+    height: 200,
+    flex: 1
+  },
   container : {
     flex: 1,
     width: '100%',
     height : '100%',
     alignItems: 'center',
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  text : {
-    fontFamily:"Kalam-Regular",
-    fontSize : 16,
-    color :'#0C2E06',
-    textAlign: 'center'
   },
   callout : {
     height: 'auto',
@@ -269,6 +265,12 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 15,
     padding: 12
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
   },
   goToButton : {
     position: 'absolute',
@@ -280,15 +282,13 @@ const styles = StyleSheet.create({
     bottom: 60,
     right : 18
   },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
   modalButton : {
     position: 'absolute',
     top: 16,
     right : 16
-  },
-  bigLoader : {
-    width: 200,
-    height: 200,
-    flex: 1
   },
   modalView: {
     margin: 20,
@@ -305,30 +305,10 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 16
   },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
-  },
-  openButton: {
-    backgroundColor: "black",
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    elevation: 2
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-    fontFamily: "JosefinSans-SemiBold",
-    fontSize : 16
-  },
   modalText: {
     fontFamily: "JosefinSans-Regular",
-    marginBottom: 15,
     fontSize : 16,
+    marginBottom: 15,
     textAlign: "center"
   },
   modalTitle: {
@@ -336,5 +316,25 @@ const styles = StyleSheet.create({
     fontSize : 18,
     marginBottom: 15,
     textAlign: "center"
-  }
+  },
+  okButton: {
+    backgroundColor: "#43820D",
+    borderRadius: 20,
+    elevation: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  okText: {
+    color: "white",
+    fontFamily: "JosefinSans-SemiBold",
+    fontSize : 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  text : {
+    color :'#0C2E06',
+    fontFamily:"Kalam-Regular",
+    fontSize : 16,
+    textAlign: 'center',
+  },
 });

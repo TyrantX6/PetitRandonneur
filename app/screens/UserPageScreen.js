@@ -80,8 +80,8 @@ export default UserPageScreen = ({navigation}) => {
 
   const changePassword = async () => {
     if (inputPassword === inputPasswordCheck) {
-      await axios.put(myConfig.API_REQUEST+'appusers/'+ userData.user.username +'/'
-        , {password : setInputPassword}, {
+      await axios.patch(myConfig.API_REQUEST+'appusers/'+ userData.user.username + '/'
+        , {password : inputPassword}, {
           headers: headers
         })
         .then(function (response) {
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor:'#005554',
     borderRadius:30,
-    color: '#005554',
+    color: '#E6E1C5',
     fontFamily: "JosefinSans-Regular",
     fontSize : 18,
     marginVertical: 6,
