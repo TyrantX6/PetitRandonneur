@@ -176,8 +176,8 @@ export default HomeScreen = ({story, navigation}) => {
         <LottieView style={styles.bigLoader} source={require('../assets/animations/34279-simple-loader.json')} autoPlay loop />
       </SafeAreaView>
     )
-
   }
+
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -194,8 +194,6 @@ export default HomeScreen = ({story, navigation}) => {
               Vous pouvez recentrer la vue sur votre position avec l'icone de cible en bas à droite (seulement si vous avez autorisé la localisation).{"\n"}{"\n"}
               Merci de créer un compte et/ou de vous connecter avant de pouvoir envoyer des histoires ou les ajouter en favoris.{"\n"}{"\n"}
               Bonne route!
-
-
             </Text>
 
             <TouchableHighlight

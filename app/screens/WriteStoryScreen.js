@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { UserDataContext } from '../App';
 import axios from 'axios';
+import Geolocation from 'react-native-geolocation-service';
 import ImagePicker from 'react-native-image-picker';
 import myConfig from '../myConfig';
 import IconIonic from 'react-native-vector-icons/Ionicons';
@@ -25,32 +26,65 @@ export default WriteStoryScreen = ({navigation}) => {
 
   const userData = React.useContext(UserDataContext);
 
-  // states used for authentification
-  const [inputUsernameConnect, setInputUsernameConnect] = useState('Arandeira');
-  const [inputPasswordConnect, setInputPasswordConnect] = useState('grenouille');
-  const [connectToken, setConnectToken] = useState('');
-
   // states used for form
   const [inputTitle, setInputTitle] = useState(null);
   const [inputExcerpt, setInputExcerpt] = useState(null);
   const [inputLong, setInputLong] = useState(null);
   const [inputLat, setInputLat] = useState(null);
   const [inputTale, setInputTale] = useState(null);
-  const [fileCover, setFileCover] = useState(null);
-
-
+  const [imageData, setImageData] = useState(null);
+  const [location, setLocation] = useState(null);
 
   //general states
-  const [loading, setLoading] = useState(true);
+  const [connected, setConnected] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-
-
   useEffect(() => {
+    refreshBasedOnImageDataChanges();
+  }, [imageData]);
 
-  }, []);
+  const refreshBasedOnImageDataChanges = () => {
+    if (imageData !== null) {
+      if ((imageData.hasOwnProperty('longitude')) && (imageData.hasOwnProperty('latitude')) ) {
+        setInputLong(imageData.longitude.toFixed(6).toString());
+        setInputLat(imageData.latitude.toFixed(6).toString());
+      } else {
+        Geolocation.getCurrentPosition(
+          (position) => {
+            setLocation({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              },
+              setInputLat(location.latitude.toFixed(6).toString()),
+              setInputLong(location.longitude.toFixed(6).toString()),
+            )
 
-  //console.log('user DATA:', userData)
+          },
+          (error) => {
+            // See error code charts below.
+            console.log(error.code, error.message);
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000, distanceFilter : 100 }
+        );
+
+      }
+    }
+  }
+
+  if (userData.user !== null){
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userData.user.tokens.access,
+      },
+    };
+  }
+
+  /*const headers = {
+    Accept: 'application/json',
+    'Content-Type': 'multipart/form-data',
+    Authorization: 'Bearer ' + userData.user.tokens.access,
+  };*/
 
   const connectUser = async () => {
     const userInfo = await axios.get(myConfig.API_REQUEST+'appusers/'+ inputUsernameConnect )
@@ -78,33 +112,62 @@ export default WriteStoryScreen = ({navigation}) => {
       });
   };
 
-  const sendStoryToDatabase = async () => {
-    if (inputPassword === inputPasswordCheck){
-      axios.post(myConfig.API_REQUEST+'appusers/', {
-        username: inputUsername,
-        email: inputEmail,
-        password: inputPassword
+  const sendStoryToDatabase = () => {
+
+    axios.post(myConfig.API_REQUEST+'stories/', {
+      author: userData.user.username,
+      cover: imageData.data,
+      excerpt: inputExcerpt,
+      latitude: inputLat,
+      longitude: inputLong,
+      tale: inputTale,
+      title : inputTitle,
+    }, config)
+      .then(function (response) {
+        console.log(response.status)
+        alert("Votre histoire à bien été envoyée à l'équipe, si elle est validée, vous la retrouverez bientôt sur la carte!")
       })
-        .then(function (response) {
-          console.log(response);
-          alert("Votre compte a bien été créé, connectez-vous en remplissant les champs plus haut dans la page.")
-        })
-        .catch(function (error) {
-          console.log(error.response);
-          alert("Un compte existe déjà avec les informations fournies.")
-        });
-    } else {
-      alert('Les mots de passe ne correspondent pas.')
-    }
+      .catch(function (error) {
+        console.log(error.response.data);
+        if (error.response.data.hasOwnProperty('title')){
+          alert('Une histoire existe déjà avec ce titre.')
+        } else {
+          alert("Il y a eu un souci avec l'envoi.")
+        }
+
+      });
   };
+
+
+  /*const sendStoryToDatabase2 = () => {
+
+    let formData = new FormData();
+    formData.append('title', inputTitle);
+    formData.append('excerpt', inputExcerpt);
+    formData.append('latitude', inputLat);
+    formData.append('longitude', inputLong);
+    formData.append('author', userData.user.username);
+    formData.append('tale', inputTale);
+    formData.append('cover', imageData.data);
+
+
+    fetch(myConfig.API_REQUEST + 'stories/', {method: 'POST', headers : headers, body : formData})
+      .then(res => res.json())
+      .then(data => console.log('DATA if success:', data.fileName))
+      .catch(err => console.log('ERR:' , err))
+
+
+  };
+  */
 
   const options = {
     title: 'Sélectionnez une belle photo qui illustrera votre récit.',
-    noData : true,
+    cancelButtonTitle : 'Annuler',
+    takePhotoButtonTitle : 'Prendre une photo',
+    chooseFromLibraryButtonTitle: 'Choisir dans ma galerie',
     storageOptions: {
       skipBackup: true,
       path: 'images',
-
     },
   };
 
@@ -112,31 +175,23 @@ export default WriteStoryScreen = ({navigation}) => {
 
   const openGallery = () => {
     ImagePicker.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
+      console.log('Chosen image = ', response.fileName);
 
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else {
-        const source = { uri: response.uri };
-
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        setFileCover(source)
+        setImageData(response);
       }
     });
   };
 
-  console.log('XXXXXXX FILE COVER XXXXXXXXX:', fileCover)
   return (
 
     <SafeAreaView style={styles.container}>
       <ScrollView>
-
         <WriteModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
-
         <View style={styles.section}>
 
           <TouchableOpacity style = {styles.modalButton} onPress = {() => {
@@ -163,40 +218,42 @@ export default WriteStoryScreen = ({navigation}) => {
             onPress={openGallery}
           >
             <View style={styles.rowWrapper}>
-              <Text style={styles.pictureFieldText}>Choisissez votre photo d'illustration</Text>
+              <Text style={styles.fieldTipsText}>Choisissez votre photo d'illustration</Text>
               <IconMaterial style={{ textAlign: 'center'}} name="add-photo-alternate" color={'black'} size={42}/>
             </View>
             {
-              !fileCover ?
+              !imageData ?
                 null
                 :
-                <Image source={{uri: fileCover.uri}} style={styles.fileCoverRender} />
+                <Image source={{uri: imageData.uri}} style={styles.fileCoverRender} />
             }
 
 
           </TouchableOpacity>
 
           <TextInput style={styles.topFields}
+                     multiline={true}
                      onChangeText={setInputExcerpt}
                      placeholder = {'Votre phrase d\'accroche'}
                      placeholderTextColor="#E6E1C5"
-                     secureTextEntry={true}
                      value={inputExcerpt}
           />
+
+          <Text style={styles.fieldTipsText}>Si votre photo le permet nous essaierons de pré-remplir ces deux champs:</Text>
           <View style={styles.rowWrapper}>
-            <TextInput style={styles.smallFields}
-                       multiline={true}
-                       onChangeText={setInputLong}
-                       placeholder = {'Longitude'}
-                       placeholderTextColor="#E6E1C5"
-                       value={inputLong}
-            />
             <TextInput style={styles.smallFields}
                        multiline={true}
                        onChangeText={setInputLat}
                        placeholder = {'Latitude'}
                        placeholderTextColor="#E6E1C5"
                        value={inputLat}
+            />
+            <TextInput style={styles.smallFields}
+                       multiline={true}
+                       onChangeText={setInputLong}
+                       placeholder = {'Longitude'}
+                       placeholderTextColor="#E6E1C5"
+                       value={inputLong}
             />
           </View>
           <TextInput style={styles.taleField}
@@ -248,25 +305,40 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  fieldTipsText: {
+    alignSelf: 'center',
+    color : 'black',
+    fontSize : 16,
+    fontFamily: "JosefinSans-Regular",
+    marginBottom : 8,
+    textAlign: 'center',
+  },
   fileCoverRender : {
     height : 150,
     width : 150,
+  },
+  logo : {
+    resizeMode : 'contain',
+    width : '40%',
   },
   modalButton : {
     position: 'absolute',
     top: 16,
     right : 16
   },
+  notConnectedText : {
+    alignItems: "center",
+    color : 'black',
+    marginVertical : 0,
+    fontFamily: "JosefinSans-Regular",
+    fontSize : 18,
+    padding : 15,
+    textAlign: 'center',
+    width: '40%',
+  },
   pictureField : {
     alignItems : 'center',
     paddingVertical : 18,
-  },
-  pictureFieldText: {
-    color : 'black',
-    fontSize : 16,
-    fontFamily: "JosefinSans-Regular",
-    textAlign: 'center',
-    alignSelf: 'center',
   },
   rowWrapper: {
     flexDirection : 'row',
@@ -309,7 +381,7 @@ const styles = StyleSheet.create({
     borderRadius:30,
     color: '#E6E1C5',
     fontFamily: "JosefinSans-Regular",
-    fontSize : 18,
+    fontSize : 14,
     marginVertical: 6,
     textAlign : 'center',
     width: '48%',

@@ -1,9 +1,14 @@
 import React, {useContext} from "react";
 
-import {MainStackNavigator, NotLoggedInNavigator, LoggedInNavigator, WritingNavigator} from './StackNavigator';
+import {
+  MainStackNavigator,
+  NotLoggedInNavigator,
+  LoggedInNavigator,
+  WritingNavigator,
+  NotLoggedInWritingNavigator,
+} from './StackNavigator';
 
 
-import WriteStoryScreen from "../screens/WriteStoryScreen";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import { UserDataContext } from '../App';
 
@@ -33,18 +38,33 @@ const BottomTabNavigator = () => {
           height: 60
         },
       }}
-
     >
-      <Tab.Screen
-        name="WriteStoryScreen"
-        component={WritingNavigator}
-        options={{
-          tabBarLabel: 'Suggérer',
-          tabBarIcon: ({ color }) => (
-            <IconMaterial name="pencil-circle-outline" color={color} size={50} />
-          ),
-        }}
-      />
+
+      {
+      userData.user == null ?
+        <Tab.Screen
+          name="NotLoggedInWriteScreen"
+          component={NotLoggedInWritingNavigator}
+          options={{
+            tabBarLabel: 'Suggérer',
+            tabBarIcon: ({ color }) => (
+              <IconMaterial name="pencil-circle-outline" color={color} size={50} />
+            ),
+          }}
+        />:
+        <Tab.Screen
+          name="WriteStoryScreen"
+          component={WritingNavigator}
+          options={{
+            tabBarLabel: 'Suggérer',
+            tabBarIcon: ({ color }) => (
+              <IconMaterial name="pencil-circle-outline" color={color} size={50} />
+            ),
+          }}
+        />
+    }
+
+
       <Tab.Screen
         name="Home"
         component={MainStackNavigator}
