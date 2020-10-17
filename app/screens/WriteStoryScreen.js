@@ -16,6 +16,8 @@ import Geolocation from 'react-native-geolocation-service';
 import ImagePicker from 'react-native-image-picker';
 import myConfig from '../myConfig';
 import IconIonic from 'react-native-vector-icons/Ionicons';
+import IconFA5 from 'react-native-vector-icons/FontAwesome5';
+import IconFontisto from 'react-native-vector-icons/Fontisto';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import WriteModal from '../components/WriteModal';
 
@@ -33,13 +35,14 @@ export default WriteStoryScreen = ({navigation}) => {
   const [inputLat, setInputLat] = useState(null);
   const [inputTale, setInputTale] = useState(null);
   const [imageData, setImageData] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [imageOrigin, setImageOrigin] = useState( null);
 
   //general states
   const [connected, setConnected] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
+  console.log('IMAGE ORIGIN: ', imageOrigin);
     refreshBasedOnImageDataChanges();
   }, [imageData]);
 
@@ -49,36 +52,37 @@ export default WriteStoryScreen = ({navigation}) => {
         setInputLong(imageData.longitude.toFixed(6).toString());
         setInputLat(imageData.latitude.toFixed(6).toString());
       } else {
-        Geolocation.getCurrentPosition(
-          (position) => {
-            setLocation({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              },
-              setInputLat(location.latitude.toFixed(6).toString()),
-              setInputLong(location.longitude.toFixed(6).toString()),
-            )
-
-          },
-          (error) => {
-            // See error code charts below.
-            console.log(error.code, error.message);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000, distanceFilter : 100 }
-        );
-
+        if (imageOrigin === 'camera'){
+          Geolocation.getCurrentPosition(
+            (position) => {
+              console.log('getting position with geolocation')
+              setInputLat(position.coords.latitude.toFixed(6).toString());
+              setInputLong(position.coords.longitude.toFixed(6).toString());
+              console.log('position set with geolocation')
+            },
+            (error) => {
+              // See error code charts below.
+              console.log(error.code, error.message);
+            },
+            {  timeout: 15000, maximumAge: 10000 }
+          );
+        } else {
+          setInputLat(null);
+          setInputLong(null);
+          console.log('nulling latlon because no data into this file')
+        }
       }
     }
   }
 
-  if (userData.user !== null){
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + userData.user.tokens.access,
-      },
-    };
-  }
+  //if (userData.user !== null){
+   // const config = {
+      //headers: {
+       // 'Content-Type': 'application/json',
+       /// 'Authorization': 'Bearer ' + userData.user.tokens.access,
+     // },
+   // };
+//  }
 
   /*const headers = {
     Accept: 'application/json',
@@ -122,7 +126,10 @@ export default WriteStoryScreen = ({navigation}) => {
       longitude: inputLong,
       tale: inputTale,
       title : inputTitle,
-    }, config)
+    }, {headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userData.user.tokens.access,
+      }})
       .then(function (response) {
         console.log(response.status)
         alert("Votre histoire à bien été envoyée à l'équipe, si elle est validée, vous la retrouverez bientôt sur la carte!")
@@ -161,10 +168,6 @@ export default WriteStoryScreen = ({navigation}) => {
   */
 
   const options = {
-    title: 'Sélectionnez une belle photo qui illustrera votre récit.',
-    cancelButtonTitle : 'Annuler',
-    takePhotoButtonTitle : 'Prendre une photo',
-    chooseFromLibraryButtonTitle: 'Choisir dans ma galerie',
     storageOptions: {
       skipBackup: true,
       path: 'images',
@@ -174,9 +177,23 @@ export default WriteStoryScreen = ({navigation}) => {
 
 
   const openGallery = () => {
-    ImagePicker.showImagePicker(options, (response) => {
+    ImagePicker.launchImageLibrary(options, (response) => {
       console.log('Chosen image = ', response.fileName);
+      setImageOrigin('gallery');
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        setImageData(response);
+      }
+    });
+  };
 
+  const openCamera = () => {
+    ImagePicker.launchCamera(options, (response) => {
+      console.log('Chosen image = ', response.fileName);
+      setImageOrigin('camera');
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -212,15 +229,25 @@ export default WriteStoryScreen = ({navigation}) => {
                      placeholderTextColor="#E6E1C5"
                      value={inputTitle}
           />
+          <View style={styles.rowWrapper}>
+            <Text style={styles.fieldTipsText}>Choisissez votre photo d'illustration:</Text>
+            <TouchableOpacity
+              style={styles.pictureField}
+              onPress={openGallery}
+            >
+              <IconFontisto style={styles.photoIcons} name="photograph" color={'#FF8811'} size={42}/>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.pictureField}
-            onPress={openGallery}
-          >
-            <View style={styles.rowWrapper}>
-              <Text style={styles.fieldTipsText}>Choisissez votre photo d'illustration</Text>
-              <IconMaterial style={{ textAlign: 'center'}} name="add-photo-alternate" color={'black'} size={42}/>
-            </View>
+            <TouchableOpacity
+              style={styles.pictureField}
+              onPress={openCamera}
+            >
+              <IconFA5 style={styles.photoIcons} name="camera-retro" color={'#FF8811'} size={42}/>
+            </TouchableOpacity>
+
+
+
+          </View>
             {
               !imageData ?
                 null
@@ -229,7 +256,7 @@ export default WriteStoryScreen = ({navigation}) => {
             }
 
 
-          </TouchableOpacity>
+
 
           <TextInput style={styles.topFields}
                      multiline={true}
@@ -239,7 +266,7 @@ export default WriteStoryScreen = ({navigation}) => {
                      value={inputExcerpt}
           />
 
-          <Text style={styles.fieldTipsText}>Si votre photo le permet nous essaierons de pré-remplir ces deux champs:</Text>
+          <Text style={styles.fieldTipsText}>Si votre photo le permet nous essaierons de remplir ces deux champs pour vous, choisissez-la avant s'il vous plaît.</Text>
           <View style={styles.rowWrapper}>
             <TextInput style={styles.smallFields}
                        multiline={true}
@@ -308,14 +335,19 @@ const styles = StyleSheet.create({
   fieldTipsText: {
     alignSelf: 'center',
     color : 'black',
-    fontSize : 16,
+    flex : 1,
+    fontSize : 17,
     fontFamily: "JosefinSans-Regular",
-    marginBottom : 8,
+    marginVertical : 8,
     textAlign: 'center',
+    width :'86%',
   },
   fileCoverRender : {
-    height : 150,
-    width : 150,
+    borderRadius : 6,
+    height : 170,
+    marginBottom: 12,
+    resizeMode: 'contain',
+    width : 170,
   },
   logo : {
     resizeMode : 'contain',
@@ -326,19 +358,20 @@ const styles = StyleSheet.create({
     top: 16,
     right : 16
   },
-  notConnectedText : {
-    alignItems: "center",
-    color : 'black',
-    marginVertical : 0,
-    fontFamily: "JosefinSans-Regular",
-    fontSize : 18,
-    padding : 15,
-    textAlign: 'center',
-    width: '40%',
-  },
   pictureField : {
     alignItems : 'center',
     paddingVertical : 18,
+  },
+  photoIcons : {
+    backgroundColor: '#F8E8D5',
+    borderColor:'#FF8811',
+    borderRadius: 5,
+    borderWidth:3,
+    flex : 1,
+    marginHorizontal : 3,
+    padding: 4,
+    textAlign : 'center',
+    zIndex : 1
   },
   rowWrapper: {
     flexDirection : 'row',

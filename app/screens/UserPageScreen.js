@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   Alert,
   Text,
@@ -15,9 +15,9 @@ import axios from 'axios';
 import myConfig from '../myConfig';
 
 import IconIonic from 'react-native-vector-icons/Ionicons';
-
 import IconEntypo from 'react-native-vector-icons/Entypo';
-import IconFA from 'react-native-vector-icons/FontAwesome5';
+
+import IconFA from 'react-native-vector-icons/FontAwesome';
 
 
 export default UserPageScreen = ({navigation}) => {
@@ -29,7 +29,7 @@ export default UserPageScreen = ({navigation}) => {
   const [inputPassword, setInputPassword] = useState('');
   const [inputPasswordCheck, setInputPasswordCheck] = useState('');
 
-  console.log('user DATA:', userData);
+  ///console.log('user DATA:', userData);
 
   const data = {
     "user": userData.user
@@ -39,7 +39,6 @@ export default UserPageScreen = ({navigation}) => {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ' + userData.user.tokens.access
   }
-
 
   const logout = () => {
     userData.setUser(null);
@@ -78,22 +77,46 @@ export default UserPageScreen = ({navigation}) => {
 
   }
 
-  const changePassword = async () => {
+  const secondStepChangePassword = async  () =>  {
+    //first, we need to check equality between the 2 new password fields.
     if (inputPassword === inputPasswordCheck) {
-      await axios.patch(myConfig.API_REQUEST+'appusers/'+ userData.user.username + '/'
-        , {password : inputPassword}, {
-          headers: headers
-        })
-        .then(function (response) {
-          alert('Correctement effectué.')
-        })
-        .catch(function (error) {
-          console.log(error.response);
-          alert('Problème avec la procédure')
-        });
-    } else {
-      alert('Les deux mots de passe ne correspondent pas entre eux. Merci de les corriger avant de ré-essayer.')
-    }
+    //if it's ok, we can PATCH the user with the new password, django on back-end will encrypt it.
+    await axios.patch(myConfig.API_REQUEST+'appusers/'+ userData.user.username + '/'
+      , {password : inputPassword}, {
+        headers: headers
+      })
+      .then(function (response) {
+        alert('Correctement effectué.')
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        alert('Problème avec la procédure')
+      });
+  } else {
+    alert('Les deux mots de passe ne correspondent pas entre eux. Merci de les corriger avant de ré-essayer.')
+  }
+}
+
+
+  const changePassword = async () => {
+    //first, we check if we obtain a valid token by sending current username and value of old password field to the API token route.
+    await axios.post(myConfig.API_REQUEST+'api/token/', {
+      username: userData.user.username,
+      password: oldPassword
+    })
+      .then(function (response) {
+        console.log('THE TOKENS:', response.data);
+        if(response.data.hasOwnProperty('access')) {
+          let tokens = response.data;
+          userData.setUser({...userData.user, tokens });
+          //if token is obtained and valid we store them and then we can move to the second part of the procedure.
+          secondStepChangePassword();
+        }
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        alert('L\'ancien mot de passe n\'est pas correct.')
+      });
 
   };
 
@@ -136,13 +159,16 @@ export default UserPageScreen = ({navigation}) => {
               />
 
           </View>
-            <Text style={styles.changePasswordSectionSubhead}> Envoyer :</Text>
+
+            <Text style={styles.changePasswordSectionSubhead}> Envoyer : </Text>
             <TouchableOpacity
               style={styles.changePasswordButton}
               onPress={changePassword}
             >
-              <IconIonic style={styles.changePasswordButtonIcon} name="push-outline" color={'#0C2E06'} size={40}/>
+              <IconFA style={styles.changePasswordButtonIcon} name="send-o" size={24}/>
             </TouchableOpacity>
+
+
 
           </View>
           <View style={styles.accountManagement}>
@@ -205,21 +231,21 @@ const styles = StyleSheet.create({
   changePasswordButton: {
     alignSelf: "center",
     backgroundColor : '#005554',
-    borderRadius : 25,
+    borderColor: '#E6E1C5',
+    borderRadius : 5,
+    borderBottomWidth: 4,
     marginVertical : 8,
-    width : '22%'
   },
   changePasswordButtonIcon : {
-    color : '#2CA6A4',
-    paddingTop: 6,
+    color : '#E6E1C5',
+    padding: 6,
+    paddingHorizontal: 20,
     textAlign : 'center',
-    paddingVertical: 2
   },
   changePasswordSection : {
     backgroundColor : '#43820D',
     borderBottomWidth : 2,
-    borderBottomColor : '#FF8811',
-    borderTopColor: '#FF8811',
+    borderColor : '#FF8811',
     borderTopWidth : 2,
     elevation : 15,
     paddingVertical : 12,
@@ -241,20 +267,6 @@ const styles = StyleSheet.create({
   changePasswordWrapper : {
     flexDirection : 'row',
     justifyContent: 'space-evenly'
-  },
-  collectionLink: {
-    alignSelf: "center",
-    backgroundColor : "#43820D",
-    borderRadius : 25,
-    marginBottom : 12,
-    marginTop : 8,
-    width : '22%',
-  },
-  collectionLinkButtonIcon: {
-    color : '#E6E1C5',
-    paddingTop: 4,
-    paddingVertical: 2,
-    textAlign : 'center',
   },
   container: {
     flex: 1,

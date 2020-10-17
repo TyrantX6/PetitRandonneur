@@ -38,7 +38,7 @@ export default UserCollectionScreen = ({navigation}) => {
 
   const getPublishedStories = async () => {
     // url model for the filtered queries http://192.168.1.50:8000/stories/?author=Arandeira
-    await axios.get(myConfig.API_REQUEST+'stories/?author='+ userData.user.username )
+    await axios.get(myConfig.API_REQUEST+'stories/?author='+ userData.user.username +'&validated=true')
       .then(function (response) {
         setUserStories(response.data);
         setLoadingPub(false);
