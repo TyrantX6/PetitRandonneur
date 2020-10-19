@@ -222,6 +222,9 @@ export default WriteStoryScreen = ({navigation}) => {
 
           {/* FIELDS */}
 
+          <View style={styles.labelsContainer}>
+            <Text style={styles.labels}>Titre:</Text>
+          </View>
           <TextInput style={styles.topFields}
                      multiline={true}
                      onChangeText={setInputTitle}
@@ -229,6 +232,9 @@ export default WriteStoryScreen = ({navigation}) => {
                      placeholderTextColor="#E6E1C5"
                      value={inputTitle}
           />
+          <View style={styles.fieldsLimitsContainer}>
+            <Text style={styles.fieldsLimits}>80 caractères max.</Text>
+          </View>
           <View style={styles.rowWrapper}>
             <Text style={styles.fieldTipsText}>Choisissez votre photo d'illustration:</Text>
             <TouchableOpacity
@@ -257,7 +263,9 @@ export default WriteStoryScreen = ({navigation}) => {
 
 
 
-
+          <View style={styles.labelsContainer}>
+            <Text style={styles.labels}>Phrase d'accroche:</Text>
+          </View>
           <TextInput style={styles.topFields}
                      multiline={true}
                      onChangeText={setInputExcerpt}
@@ -265,8 +273,14 @@ export default WriteStoryScreen = ({navigation}) => {
                      placeholderTextColor="#E6E1C5"
                      value={inputExcerpt}
           />
+          <View style={styles.fieldsLimitsContainer}>
+            <Text style={styles.fieldsLimits}>160 caractères max.</Text>
+          </View>
 
-          <Text style={styles.fieldTipsText}>Si votre photo le permet nous essaierons de remplir ces deux champs pour vous, choisissez-la avant s'il vous plaît.</Text>
+          <Text style={styles.fieldTipsText}>Si votre photo le permet nous essaierons de remplir les champs latitude et longitude pour vous, choisissez-la avant s'il vous plaît.</Text>
+          <View style={styles.labelsContainer}>
+            <Text style={styles.labels}>Localisation: </Text>
+          </View>
           <View style={styles.rowWrapper}>
             <TextInput style={styles.smallFields}
                        multiline={true}
@@ -283,14 +297,23 @@ export default WriteStoryScreen = ({navigation}) => {
                        value={inputLong}
             />
           </View>
+          <View style={styles.fieldsLimitsContainer}>
+            <Text style={styles.fieldsLimits}>6 chiffres après la virgule max.</Text>
+          </View>
+          <View style={styles.labelsContainer}>
+            <Text style={styles.labels}>Récit complet:</Text>
+          </View>
           <TextInput style={styles.taleField}
                      multiline={true}
                      numberOfLines={8}
                      onChangeText={setInputTale}
-                     placeholder = {'Votre récit'}
+                     placeholder = {'Soyez créatifs et surtout prenez du plaisir à écrire votre récit ici-même!'}
                      placeholderTextColor="black"
                      value={inputTale}
           />
+          <View style={styles.fieldsLimitsContainer}>
+            <Text style={styles.fieldsLimits}>6000 caractères max.</Text>
+          </View>
 
 
           {/* SEND BUTTON */}
@@ -332,6 +355,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  fieldsLimits : {
+    alignSelf : 'flex-end',
+    color: '#495057',
+    fontFamily: "JosefinSans-Regular",
+    fontSize : 12,
+    marginTop: -8,
+  },
+  fieldsLimitsContainer : {
+    width:'76%',
+  },
   fieldTipsText: {
     alignSelf: 'center',
     color : 'black',
@@ -348,6 +381,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     resizeMode: 'contain',
     width : 170,
+  },
+  labels : {
+    alignSelf : 'flex-start',
+    color: '#495057',
+    fontFamily: "JosefinSans-Regular",
+    fontSize : 14,
+    marginBottom : -6
+  },
+  labelsContainer : {
+    marginTop : 8,
+    width:'76%',
   },
   logo : {
     resizeMode : 'contain',
@@ -370,6 +414,7 @@ const styles = StyleSheet.create({
     flex : 1,
     marginHorizontal : 3,
     padding: 4,
+    paddingTop: 8,
     textAlign : 'center',
     zIndex : 1
   },

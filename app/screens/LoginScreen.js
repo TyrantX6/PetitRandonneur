@@ -21,8 +21,8 @@ export default LoginScreen = ({navigation}) => {
   const userData = React.useContext(UserDataContext);
 
   // states used for authentification
-  const [inputUsernameConnect, setInputUsernameConnect] = useState('Arandeira');
-  const [inputPasswordConnect, setInputPasswordConnect] = useState('grenouille');
+  const [inputUsernameConnect, setInputUsernameConnect] = useState('Nicolas');
+  const [inputPasswordConnect, setInputPasswordConnect] = useState('tano');
   const [connectToken, setConnectToken] = useState('');
 
   // states used for registration
@@ -39,12 +39,12 @@ export default LoginScreen = ({navigation}) => {
     console.log(inputEmail);
   }, [inputPasswordCheck]);
 
-  //console.log('user DATA:', userData)
+ // console.log('user DATA:', userData.user.tokens.access)
 
   const connectUser = async () => {
     const userInfo = await axios.get(myConfig.API_REQUEST+'appusers/'+ inputUsernameConnect )
       .then(function (response) {
-        //console.log('USER INFO:' , response.data);
+        console.log('USER INFO:' , response.data);
         return response.data;
       })
       .catch(function (error) {

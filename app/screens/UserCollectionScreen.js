@@ -33,7 +33,7 @@ export default UserCollectionScreen = ({navigation}) => {
   useEffect(() => {
     getPublishedStories();
     getFavoritesStories();
-  }, []);
+  }, [userData.user.favorites]);
 
 
   const getPublishedStories = async () => {
@@ -69,9 +69,32 @@ export default UserCollectionScreen = ({navigation}) => {
   }
 
 
-  const getFavoritesStories = async () => {
-     await setFavStories(userData.user.favorites)
-    setLoadingFav(false)
+  const getFavoritesStories = () => {
+
+    let urls = [];
+    console.log('URLS BEFORE PROCEDURE', urls)
+    for (const fav of userData.user.favorites) {
+      console.log(fav)
+      urls = [...urls, myConfig.API_REQUEST+ 'stories/' + fav +'/']
+    }
+    console.log('URLS AFTER PROCEDURE', urls)
+    const promises = urls.map
+    console.log(' THE FAVORITES IN STORE' , userData.user.favorites)
+    Promise.all(urls.map(url => fetch(url)))
+      .then(resp => Promise.all( resp.map(r => r.json() )))
+      .then(result => {
+        let favArray = result
+        setFavStories(favArray)
+        console.log('FAV:', favStories)
+      })
+      .then(
+        setLoadingFav(false)
+      )
+      .catch(error => {
+        console.log(error)
+      })
+
+
   };
 
 
@@ -80,6 +103,7 @@ export default UserCollectionScreen = ({navigation}) => {
   if (userData.user.favorites.length < 1) {
     favoritesStoriesRender =  <Text style={styles.tipsForUser}>Vous n'avez pas encore d'histoires favories. Ajoutez-en en cliquant sur le coeur orange quand vous êtes sur la page d'une histoire!</Text>
   } else {
+    console.log(favStories)
     favoritesStoriesRender =
 
       <FlatList

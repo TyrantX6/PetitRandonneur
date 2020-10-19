@@ -23,13 +23,18 @@ export default StoryScreen = ({route}) => {
 
   const userData = React.useContext(UserDataContext);
 
-  console.log('story:', route)
+  //console.log('story:', route);
+  //console.log('userData favorites:', userData.user.favorites);
+
 
   const [author, setAuthor] = useState([]);
 
   const [storyFeedback, setStoryFeedback] = useState(0);
 
+  const [actualStoryObject, setActualStoryObject] = useState(null);
+
   const apiUserQuery = myConfig.API_REQUEST+'appusers/'.concat(route.params.author);
+  const apiStoryQuery = myConfig.API_REQUEST+'stories/?title='.concat(route.params.title);
 
   console.log('AUTHOR:', route.params.author)
 
@@ -46,6 +51,17 @@ export default StoryScreen = ({route}) => {
 
   };
 
+  const getStoryObject = async  () => {
+
+    await axios.get(apiStoryQuery)
+      .then(function (response) {
+        setActualStoryObject(response.data);
+      })
+      .catch(function (error) {
+        console.log(error.response);
+        alert('Problème avec la procédure de récupération de l\'histoire')
+      });
+  }
 
 
   let dynamicHeartIcon;
@@ -60,23 +76,85 @@ export default StoryScreen = ({route}) => {
     if(userData.user === null) {
       setStoryFeedback(0);
     } else {
-
+      if(userData.user.favorites.includes(route.params.id)){
+        setStoryFeedback(1)
+      } else{
+        setStoryFeedback(0)
+      }
     }
-
   }
 
-  const sendFeedbackToDatabase = () => {
+  console.log('AAAAAAAAAAAAAAAA', userData.user.favorites.includes(route.params.id))
+
+
+
+
+  console.log('ROUTE PARAMS ID :', route.params.id);
+
+
+
+  const sendFeedbackToDatabase = async () => {
     if(userData.user === null) {
       alert('Merci de vous connecter avant d\'enregistrer une histoire en favori.')
     } else {
-      setStoryFeedback(1);
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userData.user.tokens.access
+      }
+
+
+    console.log('IDDDDDDDDd:', route.params.id)
+    console.log('favorites in userdata', userData.user.favorites)
+
+      if(storyFeedback === 0){
+        await axios.patch(myConfig.API_REQUEST+'appusers/'+ userData.user.username + '/'
+          , {favorites: [...userData.user.favorites, route.params.id]}, {
+            headers: headers
+          })
+          .then(function (response) {
+            console.log('ICI' , response.data)
+            userData.setUser({...userData.user, favorites : [...userData.user.favorites, route.params.id]})
+            setStoryFeedback(1)
+            alert('Correctement effectué.')
+          })
+          .catch(function (error) {
+            console.log(error.response);
+            alert('Problème avec la procédure')
+          });
+      } else {
+        const favoritesMinusOne = userData.user.favorites.filter((id) => id !== route.params.id);
+        console.log('RRRRRRRRRRRRRRRRR', favoritesMinusOne)
+
+        await axios.patch(myConfig.API_REQUEST+'appusers/'+ userData.user.username + '/'
+          ,  { favorites: favoritesMinusOne }, {
+            headers: headers
+          })
+          .then(function (response) {
+            console.log('ICI' , response.data)
+
+            setStoryFeedback(0)
+            alert('Correctement effectué.')
+          })
+          .catch(function (error) {
+            console.log(error.response);
+            alert('Problème avec la procédure')
+          });
+      }
+
     }
   }
 
   useEffect(() => {
     getAuthorName();
     checkFeedbackOnStory();
-  }, []);
+    getStoryObject();
+  }, [userData.user]);
+
+  useEffect(() => {
+    console.log('ACTUAL STORY', actualStoryObject);
+  }, [actualStoryObject]);
+
+
 
   return (
 
