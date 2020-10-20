@@ -20,8 +20,7 @@ import IconFA5 from 'react-native-vector-icons/FontAwesome5';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import WriteModal from '../components/WriteModal';
-
-
+import AsyncStorage from "@react-native-community/async-storage";
 
 
 export default WriteStoryScreen = ({navigation}) => {
@@ -38,11 +37,48 @@ export default WriteStoryScreen = ({navigation}) => {
   const [imageOrigin, setImageOrigin] = useState( null);
 
   //general states
-  const [connected, setConnected] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const saveToLocalStorage = async () => {
+    let fullStory = {
+      title : inputTitle,
+      excerpt : inputExcerpt,
+      latitude: inputLat,
+      longitude: inputLong,
+      tale : inputTale
+    }
+    try {
+      const jsonValue = JSON.stringify(fullStory)
+      console.log('JSON VALUE', jsonValue)
+      await AsyncStorage.setItem('story', jsonValue)
+      console.log('SUCCESS')
+    } catch (e) {
+      console.log(e)
+      // saving error
+    }
+  }
+
+  //direct return
+  const restoreStoryDataFromAsyncStorage = () =>
+    AsyncStorage.getItem('story')
+      .then(res => JSON.parse(res))
+      .then(data => {
+        console.log(data);
+        setInputTitle(data.title);
+        setInputExcerpt(data.excerpt);
+        setInputLong(data.longitude);
+        setInputLat(data.latitude);
+        setInputTale(data.tale);
+      })
+      .catch(err => console.log(err))
+
+  useEffect( () => {
+   restoreStoryDataFromAsyncStorage()
+  }, [])
+
+
   useEffect(() => {
-  console.log('IMAGE ORIGIN: ', imageOrigin);
+  //console.log('IMAGE ORIGIN: ', imageOrigin);
     refreshBasedOnImageDataChanges();
   }, [imageData]);
 
@@ -61,7 +97,6 @@ export default WriteStoryScreen = ({navigation}) => {
               console.log('position set with geolocation')
             },
             (error) => {
-              // See error code charts below.
               console.log(error.code, error.message);
             },
             {  timeout: 15000, maximumAge: 10000 }
@@ -74,47 +109,6 @@ export default WriteStoryScreen = ({navigation}) => {
       }
     }
   }
-
-  //if (userData.user !== null){
-   // const config = {
-      //headers: {
-       // 'Content-Type': 'application/json',
-       /// 'Authorization': 'Bearer ' + userData.user.tokens.access,
-     // },
-   // };
-//  }
-
-  /*const headers = {
-    Accept: 'application/json',
-    'Content-Type': 'multipart/form-data',
-    Authorization: 'Bearer ' + userData.user.tokens.access,
-  };*/
-
-  const connectUser = async () => {
-    const userInfo = await axios.get(myConfig.API_REQUEST+'appusers/'+ inputUsernameConnect )
-      .then(function (response) {
-        //console.log('USER INFO:' , response.data);
-        return response.data;
-      })
-      .catch(function (error) {
-        console.log(error.response);
-        alert('Identifiant inconnu.')
-      });
-
-    axios.post(myConfig.API_REQUEST+'api/token/', {
-      username: inputUsernameConnect,
-      password: inputPasswordConnect
-    })
-      .then(function (response) {
-        //console.log('THE TOKEN:', response.data);
-        let tokens = response.data;
-        userData.setUser({ ...userInfo, ...userData.user, tokens });
-      })
-      .catch(function (error) {
-        console.log(error.response);
-        alert('Mauvais pseudo ou mot de passe.')
-      });
-  };
 
   const sendStoryToDatabase = () => {
 
@@ -131,8 +125,9 @@ export default WriteStoryScreen = ({navigation}) => {
         'Authorization': 'Bearer ' + userData.user.tokens.access,
       }})
       .then(function (response) {
-        console.log(response.status)
-        alert("Votre histoire à bien été envoyée à l'équipe, si elle est validée, vous la retrouverez bientôt sur la carte!")
+        console.log(response.status);
+        AsyncStorage.removeItem('story')
+        alert("Votre histoire à bien été envoyée à l'équipe, si elle est validée, vous la retrouverez bientôt sur la carte!");
       })
       .catch(function (error) {
         console.log(error.response.data);
@@ -141,31 +136,8 @@ export default WriteStoryScreen = ({navigation}) => {
         } else {
           alert("Il y a eu un souci avec l'envoi.")
         }
-
       });
   };
-
-
-  /*const sendStoryToDatabase2 = () => {
-
-    let formData = new FormData();
-    formData.append('title', inputTitle);
-    formData.append('excerpt', inputExcerpt);
-    formData.append('latitude', inputLat);
-    formData.append('longitude', inputLong);
-    formData.append('author', userData.user.username);
-    formData.append('tale', inputTale);
-    formData.append('cover', imageData.data);
-
-
-    fetch(myConfig.API_REQUEST + 'stories/', {method: 'POST', headers : headers, body : formData})
-      .then(res => res.json())
-      .then(data => console.log('DATA if success:', data.fileName))
-      .catch(err => console.log('ERR:' , err))
-
-
-  };
-  */
 
   const options = {
     storageOptions: {
@@ -173,8 +145,6 @@ export default WriteStoryScreen = ({navigation}) => {
       path: 'images',
     },
   };
-
-
 
   const openGallery = () => {
     ImagePicker.launchImageLibrary(options, (response) => {
@@ -218,8 +188,6 @@ export default WriteStoryScreen = ({navigation}) => {
           </TouchableOpacity>
           <Text style={styles.screenTitle}>Suggestion d'histoires</Text>
 
-
-
           {/* FIELDS */}
 
           <View style={styles.labelsContainer}>
@@ -252,7 +220,6 @@ export default WriteStoryScreen = ({navigation}) => {
             </TouchableOpacity>
 
 
-
           </View>
             {
               !imageData ?
@@ -260,8 +227,6 @@ export default WriteStoryScreen = ({navigation}) => {
                 :
                 <Image source={{uri: imageData.uri}} style={styles.fileCoverRender} />
             }
-
-
 
           <View style={styles.labelsContainer}>
             <Text style={styles.labels}>Phrase d'accroche:</Text>
@@ -321,11 +286,18 @@ export default WriteStoryScreen = ({navigation}) => {
             style={styles.sendButton}
             onPress={sendStoryToDatabase}
           >
-            <Text style={styles.sendButtonText}>Soumettre</Text>
+            <Text style={styles.sendButtonText}>Envoyer</Text>
+          </TouchableOpacity>
+
+
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={saveToLocalStorage}
+          >
+            <IconFontisto
+              style={styles.photoIcons} name="save" color={'#FF8811'} size={38}/>
           </TouchableOpacity>
         </View>
-
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -422,6 +394,11 @@ const styles = StyleSheet.create({
     flexDirection : 'row',
     justifyContent: 'space-between',
     width:'86%'
+  },
+  saveButton : {
+    bottom : 34,
+    position: 'absolute',
+    right: 16,
   },
   section : {
     alignItems: "center",

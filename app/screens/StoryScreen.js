@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Dimensions,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -9,28 +8,17 @@ import {
   View,
 } from 'react-native';
 import myConfig from '../myConfig';
-
 import axios from 'axios';
-
-
-
 import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import {UserDataContext} from '../App';
-
 
 export default StoryScreen = ({route}) => {
 
   const userData = React.useContext(UserDataContext);
 
-  //console.log('story:', route);
-  //console.log('userData favorites:', userData.user.favorites);
-
-
   const [author, setAuthor] = useState([]);
-
   const [storyFeedback, setStoryFeedback] = useState(0);
-
   const [actualStoryObject, setActualStoryObject] = useState(null);
 
   const apiUserQuery = myConfig.API_REQUEST+'appusers/'.concat(route.params.author);
@@ -48,11 +36,9 @@ export default StoryScreen = ({route}) => {
           console.log(error.response);
           alert('Problème de connexion au serveur. Impossible de récupérer le nom de l\'auteur.')
         });
-
   };
 
   const getStoryObject = async  () => {
-
     await axios.get(apiStoryQuery)
       .then(function (response) {
         setActualStoryObject(response.data);
@@ -63,14 +49,12 @@ export default StoryScreen = ({route}) => {
       });
   }
 
-
   let dynamicHeartIcon;
   if (userData.user === null){
     dynamicHeartIcon = <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#A0A0A0'} size={50} />
   } else {
     dynamicHeartIcon = <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#FF8811'} size={50} />
   }
-
 
   const checkFeedbackOnStory = () => {
     if(userData.user === null) {
@@ -84,15 +68,6 @@ export default StoryScreen = ({route}) => {
     }
   }
 
-  console.log('AAAAAAAAAAAAAAAA', userData.user.favorites.includes(route.params.id))
-
-
-
-
-  console.log('ROUTE PARAMS ID :', route.params.id);
-
-
-
   const sendFeedbackToDatabase = async () => {
     if(userData.user === null) {
       alert('Merci de vous connecter avant d\'enregistrer une histoire en favori.')
@@ -102,17 +77,12 @@ export default StoryScreen = ({route}) => {
         'Authorization': 'Bearer ' + userData.user.tokens.access
       }
 
-
-    console.log('IDDDDDDDDd:', route.params.id)
-    console.log('favorites in userdata', userData.user.favorites)
-
       if(storyFeedback === 0){
         await axios.patch(myConfig.API_REQUEST+'appusers/'+ userData.user.username + '/'
           , {favorites: [...userData.user.favorites, route.params.id]}, {
             headers: headers
           })
           .then(function (response) {
-            console.log('ICI' , response.data)
             userData.setUser({...userData.user, favorites : [...userData.user.favorites, route.params.id]})
             setStoryFeedback(1)
             alert('Correctement effectué.')
@@ -123,15 +93,13 @@ export default StoryScreen = ({route}) => {
           });
       } else {
         const favoritesMinusOne = userData.user.favorites.filter((id) => id !== route.params.id);
-        console.log('RRRRRRRRRRRRRRRRR', favoritesMinusOne)
 
         await axios.patch(myConfig.API_REQUEST+'appusers/'+ userData.user.username + '/'
           ,  { favorites: favoritesMinusOne }, {
             headers: headers
           })
           .then(function (response) {
-            console.log('ICI' , response.data)
-
+            userData.setUser({...userData.user, favorites: favoritesMinusOne})
             setStoryFeedback(0)
             alert('Correctement effectué.')
           })
@@ -140,7 +108,6 @@ export default StoryScreen = ({route}) => {
             alert('Problème avec la procédure')
           });
       }
-
     }
   }
 
@@ -149,12 +116,6 @@ export default StoryScreen = ({route}) => {
     checkFeedbackOnStory();
     getStoryObject();
   }, [userData.user]);
-
-  useEffect(() => {
-    console.log('ACTUAL STORY', actualStoryObject);
-  }, [actualStoryObject]);
-
-
 
   return (
 
@@ -194,7 +155,6 @@ export default StoryScreen = ({route}) => {
 
       </ScrollView>
     </SafeAreaView>
-
   );
 };
 
@@ -247,5 +207,3 @@ const styles = StyleSheet.create({
     height : 'auto'
   }
 });
-
-

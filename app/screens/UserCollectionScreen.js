@@ -68,24 +68,22 @@ export default UserCollectionScreen = ({navigation}) => {
       />
   }
 
-
   const getFavoritesStories = () => {
 
     let urls = [];
-    console.log('URLS BEFORE PROCEDURE', urls)
+    //console.log('URLS BEFORE PROCEDURE', urls)
     for (const fav of userData.user.favorites) {
-      console.log(fav)
+      //console.log(fav)
       urls = [...urls, myConfig.API_REQUEST+ 'stories/' + fav +'/']
     }
-    console.log('URLS AFTER PROCEDURE', urls)
+    //console.log('URLS AFTER PROCEDURE', urls)
     const promises = urls.map
-    console.log(' THE FAVORITES IN STORE' , userData.user.favorites)
+    //console.log(' THE FAVORITES IN STORE' , userData.user.favorites)
     Promise.all(urls.map(url => fetch(url)))
       .then(resp => Promise.all( resp.map(r => r.json() )))
       .then(result => {
         let favArray = result
         setFavStories(favArray)
-        console.log('FAV:', favStories)
       })
       .then(
         setLoadingFav(false)
@@ -97,13 +95,11 @@ export default UserCollectionScreen = ({navigation}) => {
 
   };
 
-
   let favoritesStoriesRender;
 
   if (userData.user.favorites.length < 1) {
     favoritesStoriesRender =  <Text style={styles.tipsForUser}>Vous n'avez pas encore d'histoires favories. Ajoutez-en en cliquant sur le coeur orange quand vous êtes sur la page d'une histoire!</Text>
   } else {
-    console.log(favStories)
     favoritesStoriesRender =
 
       <FlatList
@@ -118,9 +114,6 @@ export default UserCollectionScreen = ({navigation}) => {
         style={styles.flatListContainer}
       />
   }
-
-
-
 
   return (
 

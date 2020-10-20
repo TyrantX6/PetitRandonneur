@@ -14,8 +14,6 @@ import axios from 'axios';
 import myConfig from '../myConfig';
 
 
-
-
 export default LoginScreen = ({navigation}) => {
 
   const userData = React.useContext(UserDataContext);
@@ -35,12 +33,6 @@ export default LoginScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true)
 
 
-  useEffect(() => {
-    console.log(inputEmail);
-  }, [inputPasswordCheck]);
-
- // console.log('user DATA:', userData.user.tokens.access)
-
   const connectUser = async () => {
     const userInfo = await axios.get(myConfig.API_REQUEST+'appusers/'+ inputUsernameConnect )
       .then(function (response) {
@@ -51,6 +43,14 @@ export default LoginScreen = ({navigation}) => {
         console.log(error.response);
         alert('Identifiant inconnu.')
       });
+
+    /* .then(res => {
+         console.log('THE TOKEN:', response.data);
+          let tokens = response.data;
+          userData.setUser({ ...userInfo, ...userData.user, tokens });
+        })
+      .catch(error => alert('Mauvais pseudo ou mot de passe.'))
+      */
 
     axios.post(myConfig.API_REQUEST+'api/token/', {
       username: inputUsernameConnect,
@@ -86,7 +86,6 @@ export default LoginScreen = ({navigation}) => {
       alert('Les mots de passe ne correspondent pas.')
     }
   };
-
 
   return (
 
