@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { UserDataContext } from '../App';
+import { UserDataContext } from '../context/AppContexts';
 
 import LottieView from 'lottie-react-native';
 import IconIonic from 'react-native-vector-icons/Ionicons';

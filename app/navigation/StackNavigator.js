@@ -7,7 +7,7 @@ import LoginScreen from "../screens/LoginScreen";
 import StoryScreen from "../screens/StoryScreen";
 import UserPageScreen from "../screens/UserPageScreen";
 import UserCollectionScreen from '../screens/UserCollectionScreen';
-import {UserDataContext} from '../App';
+import {UserDataContext} from '../context/AppContexts';
 import WriteStoryScreen from '../screens/WriteStoryScreen';
 import NotLoggedInWriteScreen from '../screens/NotLoggedInWriteScreen';
 

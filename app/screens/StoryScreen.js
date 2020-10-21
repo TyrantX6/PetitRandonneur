@@ -11,7 +11,7 @@ import myConfig from '../myConfig';
 import axios from 'axios';
 import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
-import {UserDataContext} from '../App';
+import {UserDataContext} from '../context/AppContexts';
 
 export default StoryScreen = ({route}) => {
 
@@ -19,12 +19,8 @@ export default StoryScreen = ({route}) => {
 
   const [author, setAuthor] = useState([]);
   const [storyFeedback, setStoryFeedback] = useState(0);
-  const [actualStoryObject, setActualStoryObject] = useState(null);
 
   const apiUserQuery = myConfig.API_REQUEST+'appusers/'.concat(route.params.author);
-  const apiStoryQuery = myConfig.API_REQUEST+'stories/?title='.concat(route.params.title);
-
-  console.log('AUTHOR:', route.params.author)
 
   const getAuthorName = async () => {
 
@@ -34,23 +30,11 @@ export default StoryScreen = ({route}) => {
       })
         .catch(function (error) {
           console.log(error.response);
-          alert('Problème de connexion au serveur. Impossible de récupérer le nom de l\'auteur.')
         });
   };
 
-  const getStoryObject = async  () => {
-    await axios.get(apiStoryQuery)
-      .then(function (response) {
-        setActualStoryObject(response.data);
-      })
-      .catch(function (error) {
-        console.log(error.response);
-        alert('Problème avec la procédure de récupération de l\'histoire')
-      });
-  }
-
   let dynamicHeartIcon;
-  if (userData.user === null){
+  if (!userData.user){
     dynamicHeartIcon = <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#A0A0A0'} size={50} />
   } else {
     dynamicHeartIcon = <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#FF8811'} size={50} />
@@ -114,7 +98,6 @@ export default StoryScreen = ({route}) => {
   useEffect(() => {
     getAuthorName();
     checkFeedbackOnStory();
-    getStoryObject();
   }, [userData.user]);
 
   return (

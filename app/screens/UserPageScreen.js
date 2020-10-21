@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { UserDataContext } from '../App';
+import { UserDataContext } from '../context/AppContexts';
 import axios from 'axios';
 import myConfig from '../myConfig';
 

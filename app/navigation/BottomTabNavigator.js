@@ -1,5 +1,4 @@
 import React, {useContext} from "react";
-
 import {
   MainStackNavigator,
   NotLoggedInNavigator,
@@ -8,15 +7,11 @@ import {
   NotLoggedInWritingNavigator,
 } from './StackNavigator';
 
-
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import { UserDataContext } from '../App';
+import { UserDataContext } from '../context/AppContexts';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-
-
-
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const BottomTabNavigator = () => {
 
@@ -46,7 +41,6 @@ const BottomTabNavigator = () => {
           name="NotLoggedInWriteScreen"
           component={NotLoggedInWritingNavigator}
           options={{
-            tabBarLabel: 'Suggérer',
             tabBarIcon: ({ color }) => (
               <IconMaterial name="pencil-circle-outline" color={color} size={50} />
             ),
@@ -56,7 +50,6 @@ const BottomTabNavigator = () => {
           name="WriteStoryScreen"
           component={WritingNavigator}
           options={{
-            tabBarLabel: 'Suggérer',
             tabBarIcon: ({ color }) => (
               <IconMaterial name="pencil-circle-outline" color={color} size={50} />
             ),
@@ -69,7 +62,6 @@ const BottomTabNavigator = () => {
         name="Home"
         component={MainStackNavigator}
         options={{
-          tabBarLabel: 'Accueil',
           tabBarIcon: ({ color }) => (
             <Icon name="earth-sharp" color={color} size={86}
                   style={{ width: 100, height : 124, backgroundColor: '#43820D', borderRadius: 130, textAlign: 'center'
@@ -84,7 +76,6 @@ const BottomTabNavigator = () => {
             name="LoginScreen"
             component={NotLoggedInNavigator}
             options={{
-              tabBarLabel: 'Identification',
               tabBarIcon: ({ color }) => (
                 <Icon name="person-circle-outline" color={color} size={50} />
               ),
@@ -94,14 +85,12 @@ const BottomTabNavigator = () => {
             name="LoginScreen"
             component={LoggedInNavigator}
             options={{
-              tabBarLabel: 'Identification',
               tabBarIcon: ({ color }) => (
                 <Icon name="person-circle-outline" color={color} size={50} />
               ),
             }}
           />
       }
-
     </Tab.Navigator>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -11,8 +11,6 @@ import {
 
 
 export default WriteModal = ({ modalVisible, setModalVisible }) => {
-
-  //const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <Modal
