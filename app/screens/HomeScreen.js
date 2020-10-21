@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import MapView, { Callout, Marker } from 'react-native-maps';
+import  { Callout, Marker } from 'react-native-maps';
+import MapView from "react-native-map-clustering";
 import {
   SafeAreaView,
   StyleSheet,
@@ -211,6 +212,7 @@ export default HomeScreen = ({story, navigation}) => {
 
       <MapView
         style={styles.map}
+        clusterColor = '#FF8811'
         region={region}
         onRegionChangeComplete={region =>setRegion(region)}
         showsUserLocation = {true}
