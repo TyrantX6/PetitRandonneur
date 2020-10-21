@@ -16,6 +16,7 @@ import myConfig from '../myConfig';
 import LottieView from 'lottie-react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome5';
 import StoryComponent from '../components/StoryComponent';
+import OfflineWindow from '../components/OfflineWindow';
 
 
 export default UserCollectionScreen = ({navigation}) => {
@@ -118,6 +119,7 @@ export default UserCollectionScreen = ({navigation}) => {
   return (
 
     <SafeAreaView style={styles.container}>
+      <OfflineWindow/>
 
       <TouchableOpacity style = {styles.settingsScreenButton} onPress = {() => {
         navigation.navigate('UserPageScreen')

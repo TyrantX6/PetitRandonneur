@@ -21,8 +21,7 @@ import axios from 'axios';
 import LottieView from 'lottie-react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconIonic from 'react-native-vector-icons/Ionicons';
-import OfflineModal from '../components/OfflineModal';
-import WriteModal from '../components/WriteModal';
+import OfflineWindow from '../components/OfflineWindow';
 import { NetworkConsumer } from 'react-native-offline';
 
 
@@ -37,6 +36,8 @@ export default HomeScreen = ({story, navigation}) => {
   const [permissionGranted, setPermissionGranted] = useState('');
 
   const [userLocation, setUserLocation] = useState('');
+
+  const [connected, setConnected] = useState(null)
 
   const [region, setRegion] = useState({
     latitude: 48.857094,
@@ -219,15 +220,8 @@ export default HomeScreen = ({story, navigation}) => {
         </View>
       </Modal>
 
-      <NetworkConsumer>
-        {({ isConnected }) => (
-          isConnected ? (
-            <Text></Text>
-          ) : (
-            <OfflineModal modalOfflineVisible={modalOfflineVisible} setModalOfflineVisible={setModalOfflineVisible}/>
-          )
-        )}
-      </NetworkConsumer>
+      <OfflineWindow/>
+
 
 
       <MapView

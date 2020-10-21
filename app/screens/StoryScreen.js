@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -15,7 +15,7 @@ import {UserDataContext} from '../context/AppContexts';
 
 export default StoryScreen = ({route}) => {
 
-  const userData = React.useContext(UserDataContext);
+  const userData = useContext(UserDataContext);
 
   const [author, setAuthor] = useState([]);
   const [storyFeedback, setStoryFeedback] = useState(0);

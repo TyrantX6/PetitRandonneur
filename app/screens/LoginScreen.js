@@ -80,7 +80,7 @@ export default LoginScreen = ({navigation}) => {
         })
         .catch(function (error) {
           console.log(error.response);
-          alert("Un compte existe déjà avec les informations fournies.")
+          alert("Un compte existe déjà avec les informations fournies. Ou votre mot de passe n'est pas aux normes")
         });
     } else {
       alert('Les mots de passe ne correspondent pas.')
