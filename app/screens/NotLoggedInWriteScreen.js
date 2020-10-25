@@ -1,30 +1,13 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {
-  Image,
-  Dimensions,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, Dimensions, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import { UserDataContext } from '../context/AppContexts';
 
 import LottieView from 'lottie-react-native';
 import IconIonic from 'react-native-vector-icons/Ionicons';
-import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 
 import WriteModal from '../components/WriteModal';
 
-
-
-
 export default NotLoggedInWriteScreen = ({navigation}) => {
-
-  const userData = React.useContext(UserDataContext);
-
-
 
   //general states
   const [modalVisible, setModalVisible] = useState(false);
@@ -49,7 +32,6 @@ export default NotLoggedInWriteScreen = ({navigation}) => {
           style={styles.logo}
           source={require('../assets/appPictures/logo_petit_randonneurWithoutBG.png')}
           />
-
 
         </View>
 
@@ -99,5 +81,4 @@ const styles = StyleSheet.create({
     height : 150,
     justifyContent: 'center',
   }
-
 });

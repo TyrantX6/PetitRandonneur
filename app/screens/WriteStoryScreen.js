@@ -29,6 +29,7 @@ export default WriteStoryScreen = ({navigation}) => {
 
   const userData =useContext(UserDataContext);
 
+
   // states used for form
   const [inputTitle, setInputTitle] = useState(null);
   const [inputExcerpt, setInputExcerpt] = useState(null);
@@ -84,7 +85,7 @@ export default WriteStoryScreen = ({navigation}) => {
   }, [imageData]);
 
   const refreshBasedOnImageDataChanges = () => {
-    if (imageData !== null) {
+    if (imageData) {
       if ((imageData.hasOwnProperty('longitude')) && (imageData.hasOwnProperty('latitude'))) {
         setInputLong(imageData.longitude.toFixed(6).toString());
         setInputLat(imageData.latitude.toFixed(6).toString());

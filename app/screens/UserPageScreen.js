@@ -25,9 +25,9 @@ export default UserPageScreen = ({navigation}) => {
 
   const userData = useContext(UserDataContext);
 
-  const [oldPassword, setOldPassword] = useState('');
-  const [inputPassword, setInputPassword] = useState('');
-  const [inputPasswordCheck, setInputPasswordCheck] = useState('');
+  const [oldPassword, setOldPassword] = useState(null);
+  const [inputPassword, setInputPassword] = useState(null);
+  const [inputPasswordCheck, setInputPasswordCheck] = useState(null);
 
   ///console.log('user DATA:', userData);
 
@@ -117,7 +117,6 @@ export default UserPageScreen = ({navigation}) => {
         console.log(error.response);
         alert('L\'ancien mot de passe n\'est pas correct.')
       });
-
   };
 
   return (
