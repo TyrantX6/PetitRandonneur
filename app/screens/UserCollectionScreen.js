@@ -17,6 +17,7 @@ import LottieView from 'lottie-react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome5';
 import StoryComponent from '../components/StoryComponent';
 import OfflineWindow from '../components/OfflineWindow';
+import {showMessage} from 'react-native-flash-message';
 
 
 export default UserCollectionScreen = ({navigation}) => {
@@ -46,7 +47,11 @@ export default UserCollectionScreen = ({navigation}) => {
       })
       .catch(function (error) {
         console.log(error.response);
-        alert('Problème avec la recherche d\'histoires dans vos collections, merci de rééssayer plus tard.')
+        showMessage({
+          message: "Problème",
+          description: "Nous n'avons pas pu trouver vos histoires publiées, merci de retenter plus tard.",
+          type: "danger",
+        });
       });
   };
 
@@ -90,6 +95,11 @@ export default UserCollectionScreen = ({navigation}) => {
         setLoadingFav(false)
       )
       .catch(error => {
+        showMessage({
+          message: "Problème",
+          description: "Nous n'avons pas pu trouver vos histoires préférées, merci de retenter plus tard.",
+          type: "danger",
+        });
         console.log(error)
       })
 
@@ -149,7 +159,6 @@ export default UserCollectionScreen = ({navigation}) => {
               publishedStoriesRender
             }
           </View>
-
         </View>
 
     </SafeAreaView>

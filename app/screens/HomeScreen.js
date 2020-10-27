@@ -23,6 +23,8 @@ import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconIonic from 'react-native-vector-icons/Ionicons';
 import OfflineWindow from '../components/OfflineWindow';
 import { NetworkConsumer } from 'react-native-offline';
+import NetInfo, {useNetInfo} from '@react-native-community/netinfo';
+import {showMessage} from 'react-native-flash-message';
 
 
 export default HomeScreen = ({story, navigation}) => {
@@ -31,13 +33,9 @@ export default HomeScreen = ({story, navigation}) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [modalOfflineVisible, setModalOfflineVisible] = useState(true);
-
   const [permissionGranted, setPermissionGranted] = useState('');
 
   const [userLocation, setUserLocation] = useState('');
-
-  const [connected, setConnected] = useState(null)
 
   const [region, setRegion] = useState({
     latitude: 48.857094,
@@ -53,11 +51,14 @@ export default HomeScreen = ({story, navigation}) => {
     await axios.get(myConfig.API_REQUEST + 'stories/?validated=true')
       .then(function (response) {
         setMarkers(response.data);
-        console.log('response results:', markers);
+        //console.log('response results:', markers);
       })
       .catch(function (error) {
-        console.log('response results:', markers);
-        alert('Problème de connexion au serveur. Les histoires n\'apparaitront pas.');
+        showMessage({
+          message: "Problème",
+          description: "Nous n'avons pas réussi à récupérer les histoires, elles n'apparaîtront pas sur la carte.",
+          type: "warning",
+        });
       });
   };
 
@@ -89,7 +90,6 @@ export default HomeScreen = ({story, navigation}) => {
         getUserLocation();
       } else {
         requestGPSPermission();
-        console.log('Location is not enabled');
       }
     });
   };
@@ -102,9 +102,8 @@ export default HomeScreen = ({story, navigation}) => {
           title: 'Nous avons besoin de votre approbation.',
           message:
             'Notre application a besoin de votre autorisation pour pouvoir vous localiser. ' +
-            'Vous bénéficierez ainsi de fontionnalités supplémentaires.',
-          buttonNeutral: 'Plus tard',
-          buttonNegative: 'Refuser',
+            'Vous bénéficierez ainsi de fontionnalités supplémentaires comme le bouton de recentrage sur votre position, ou le remplissage automatique des valeurs de longitude et latitude.' +
+            'Donnez (ou non) votre accord au prochain écran.',
           buttonPositive: 'OK',
         },
       );
@@ -120,9 +119,10 @@ export default HomeScreen = ({story, navigation}) => {
     }
   };
 
-  useEffect(() => {
-    getStories();
-  }, []);
+  const netStatus = useNetInfo();
+    if ((netStatus.isInternetReachable === true) && (markers.length < 1)) {
+      getStories();
+    }
 
   useEffect(() => {
     permissionCheck();
@@ -173,9 +173,6 @@ export default HomeScreen = ({story, navigation}) => {
         </View>
       </Callout>
     </Marker>);
-
-  console.log('region:', region);
-
 
   if (loading) {
     return (
@@ -253,7 +250,6 @@ export default HomeScreen = ({story, navigation}) => {
           <IconFA style={{textAlign: 'center'}} name="map-signs" color={'#FF8811'} size={40}/>
         </TouchableOpacity>
       }
-
 
     </SafeAreaView>
   );

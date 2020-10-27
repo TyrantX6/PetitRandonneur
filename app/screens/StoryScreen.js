@@ -12,6 +12,8 @@ import axios from 'axios';
 import ImageModal from 'react-native-image-modal';
 import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import {UserDataContext} from '../context/AppContexts';
+import {NetworkConsumer} from 'react-native-offline';
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 export default StoryScreen = ({route}) => {
 
@@ -54,7 +56,13 @@ export default StoryScreen = ({route}) => {
 
   const sendFeedbackToDatabase = async () => {
     if(userData.user === null) {
-      alert('Merci de vous connecter avant d\'enregistrer une histoire en favori.')
+      showMessage({
+        message: "Attention",
+        description: "Merci de vous connecter avant d'ajouter une histoire dans vos favoris.",
+        type: "warning",
+      });
+
+
     } else {
       const headers = {
         'Content-Type': 'application/json',
@@ -69,11 +77,19 @@ export default StoryScreen = ({route}) => {
           .then(function (response) {
             userData.setUser({...userData.user, favorites : [...userData.user.favorites, route.params.id]})
             setStoryFeedback(1)
-            alert('Correctement effectué.')
+            showMessage({
+              message: "Succès",
+              description: "L'histoire à bien été ajoutée à vos favoris.",
+              type: "success",
+            });
           })
           .catch(function (error) {
             console.log(error.response);
-            alert('Problème avec la procédure')
+            showMessage({
+              message: "Problème",
+              description: "Il y a eu un souci avec la procédure merci de re-tenter plus tard.",
+              type: "danger",
+            });
           });
       } else {
         const favoritesMinusOne = userData.user.favorites.filter((id) => id !== route.params.id);
@@ -85,11 +101,19 @@ export default StoryScreen = ({route}) => {
           .then(function (response) {
             userData.setUser({...userData.user, favorites: favoritesMinusOne})
             setStoryFeedback(0)
-            alert('Correctement effectué.')
+            showMessage({
+              message: "Succès",
+              description: "L'histoire à bien été retirée de vos favoris.",
+              type: "success",
+            });
           })
           .catch(function (error) {
             console.log(error.response);
-            alert('Problème avec la procédure')
+            showMessage({
+              message: "Problème",
+              description: "Il y a eu un souci avec la procédure merci de re-tenter plus tard.",
+              type: "danger",
+            });
           });
       }
     }
@@ -105,15 +129,31 @@ export default StoryScreen = ({route}) => {
     <SafeAreaView style={styles.background}>
       <ScrollView>
         <Text style={styles.storyTitle}>{route.params.title}</Text>
+        <NetworkConsumer>
+          {({isConnected}) => (
+            isConnected ? (
+              <TouchableOpacity
+                onPress={() => sendFeedbackToDatabase()}
+              >
+                {storyFeedback === 0 ?
+                  dynamicHeartIcon :
+                  <IconMaterial style={styles.favoriteIcon} name="favorite" color={'#FF8811'} size={50} />
+                }
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => showMessage({
+                  message: "Attention",
+                  description: "Merci de vous reconnecter à Internet avant de continuer.",
+                  type: "warning",
+                })}
+              >
+                <IconMaterial style={styles.favoriteIcon} name="favorite-border" color={'#A0A0A0'} size={50} />
+              </TouchableOpacity>
+            )
+          )}
+        </NetworkConsumer>
 
-        <TouchableOpacity
-          onPress={() => sendFeedbackToDatabase()}
-        >
-          {storyFeedback === 0 ?
-            dynamicHeartIcon:
-            <IconMaterial style={styles.favoriteIcon} name="favorite" color={'#FF8811'} size={50} />
-          }
-        </TouchableOpacity>
 
         <View style={styles.storyCover}>
           <ImageModal

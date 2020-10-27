@@ -22,6 +22,7 @@ import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import WriteModal from '../components/WriteModal';
 import AsyncStorage from '@react-native-community/async-storage';
 import {NetworkConsumer} from 'react-native-offline';
+import {showMessage} from 'react-native-flash-message';
 
 
 
@@ -55,8 +56,18 @@ export default WriteStoryScreen = ({navigation}) => {
       console.log('JSON VALUE', jsonValue);
       await AsyncStorage.setItem('story', jsonValue);
       console.log('SUCCESS');
+      showMessage({
+        message: "Succès",
+        description: "L'enregistrement à bien été effecté, tous vos textes ont été sauvegardés.",
+        type: "success",
+      });
     } catch (e) {
       console.log(e);
+      showMessage({
+        message: "Problème",
+        description: "L'enregistrement ne s'est pas bien déroulé. Merci de retenter plus tard.",
+        type: "danger",
+      });
       // saving error
     }
   };
@@ -131,14 +142,26 @@ export default WriteStoryScreen = ({navigation}) => {
       .then(function (response) {
         console.log(response.status);
         AsyncStorage.removeItem('story');
-        alert('Votre histoire à bien été envoyée à l\'équipe, si elle est validée, vous la retrouverez bientôt sur la carte!');
+        showMessage({
+          message: "Succès",
+          description: "Votre hisoire à bien été envoyée à l'équipe, si elle est validée, vous la retrouverez bientôt sur la carte!",
+          type: "success",
+        });
       })
       .catch(function (error) {
         console.log(error.response.data);
         if (error.response.data.hasOwnProperty('title')) {
-          alert('Une histoire existe déjà avec ce titre.');
+          showMessage({
+            message: "Attention",
+            description: "Une histoire existe déjà avec ce titre, merci de le modifier.",
+            type: "warning",
+          });
         } else {
-          alert('Il y a eu un souci avec l\'envoi.');
+          showMessage({
+            message: "Problème",
+            description: "Il y au un problème au moment de l'envoi, n'hésitez pas à sauvergarder votre histoire pour retenter plus tard.",
+            type: "danger",
+          });
         }
       });
   };
@@ -279,7 +302,7 @@ export default WriteStoryScreen = ({navigation}) => {
                        multiline={true}
                        numberOfLines={8}
                        onChangeText={setInputTale}
-                       placeholder={'Soyez créatifs et surtout prenez du plaisir à écrire votre récit ici-même!'}
+                       placeholder={'Votre récit : Soyez créatifs et surtout faites vous plaisir!'}
                        placeholderTextColor="black"
                        value={inputTale}
             />
@@ -301,7 +324,11 @@ export default WriteStoryScreen = ({navigation}) => {
                 ) : (
                   <TouchableOpacity
                     style={styles.sendButtonOffline}
-                    onPress={() => alert('Merci de vous reconnecter à Internet avant d\'envoyer une histoire.')}
+                    onPress={() => showMessage({
+                      message: "Attention",
+                      description: "Merci de vous reconnecter à Internet avant d'essayer d'envoyer une histoire.",
+                      type: "warning",
+                    })}
                   >
                     <Text style={styles.sendButtonText}>Envoyer</Text>
                   </TouchableOpacity>

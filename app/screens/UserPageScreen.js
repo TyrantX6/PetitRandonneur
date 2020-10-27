@@ -18,6 +18,7 @@ import IconIonic from 'react-native-vector-icons/Ionicons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 
 import IconFA from 'react-native-vector-icons/FontAwesome';
+import {showMessage} from 'react-native-flash-message';
 
 
 export default UserPageScreen = ({navigation}) => {
@@ -72,7 +73,11 @@ export default UserPageScreen = ({navigation}) => {
       })
       .catch(function (error) {
         console.log(error.response);
-        alert('La suppression ne s\'est pas bien déroulée. Ré-essayez plus tard.')
+        showMessage({
+          message: "Problème",
+          description: "La procédure de suppression du compte ne s'est pas bien déroulée, merci de retenter plus tard.",
+          type: "danger",
+        });
       });
 
   }
@@ -86,14 +91,26 @@ export default UserPageScreen = ({navigation}) => {
         headers: headers
       })
       .then(function (response) {
-        alert('Correctement effectué.')
+        showMessage({
+          message: "Succès",
+          description: "La procédure s'est bien déroulée.",
+          type: "success",
+        });
       })
       .catch(function (error) {
         console.log(error.response);
-        alert('Problème avec la procédure')
+        showMessage({
+          message: "Problème",
+          description: "Nous avons rencontré un problème au cours de la procédure, merci de retenter plus tard.",
+          type: "danger",
+        });
       });
   } else {
-    alert('Les deux mots de passe ne correspondent pas entre eux. Merci de les corriger avant de ré-essayer.')
+      showMessage({
+        message: "Attention",
+        description: "Les deux nouveaux mots de passe ne correspondent pas. Merci de les corriger avant de retenter.",
+        type: "warning",
+      });
   }
 }
 
@@ -115,7 +132,11 @@ export default UserPageScreen = ({navigation}) => {
       })
       .catch(function (error) {
         console.log(error.response);
-        alert('L\'ancien mot de passe n\'est pas correct.')
+        showMessage({
+          message: "Attention",
+          description: "L'ancien mot de passe n'est pas correct. Vérifiez votre saisie.",
+          type: "warning",
+        });
       });
   };
 
@@ -158,6 +179,9 @@ export default UserPageScreen = ({navigation}) => {
               />
 
           </View>
+            <View style={styles.fieldsLimitsContainer}>
+              <Text style={styles.fieldsLimits}>8 caractères minimum, au moins une lettre, pas trop commun</Text>
+            </View>
 
             <Text style={styles.changePasswordSectionSubhead}> Envoyer : </Text>
             <TouchableOpacity
@@ -282,6 +306,18 @@ const styles = StyleSheet.create({
   },
   fieldContainer :{
     flexDirection: 'row'
+  },
+  fieldsLimits: {
+    alignSelf: 'center',
+    color: '#E6E1C5',
+    fontFamily: 'JosefinSans-Regular',
+    fontSize: 12,
+    marginTop: -8,
+    textAlign : 'center'
+  },
+  fieldsLimitsContainer: {
+    alignSelf: 'center',
+    width: '76%',
   },
   logoutButton: {
     alignSelf: "center",
