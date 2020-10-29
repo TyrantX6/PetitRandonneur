@@ -5,7 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 
 export default App = () => {
-
+//very simple App.js file, included in the {children} in AppContext.js
   return (
     <AppContexts>
       <NavigationContainer>

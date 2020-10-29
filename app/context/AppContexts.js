@@ -3,9 +3,11 @@ import React, {useState, useEffect, createContext} from 'react';
 import AsyncStorage from "@react-native-community/async-storage";
 import { NetworkProvider } from 'react-native-offline';
 import FlashMessage from 'react-native-flash-message';
+import axios from 'axios';
+import myConfig from '../myConfig';
 
 export const UserDataContext = createContext();
-export const NetworkContext = createContext();
+
 
 export default AppContexts = ({children}) => {
 
@@ -19,13 +21,38 @@ export default AppContexts = ({children}) => {
       .then(data => {
           //console.log(data)
           setUser(data)
+          console.log(user)
         }
       )
       .catch(err => console.log(err))
   }
 
+  // const refreshUser = async () => {
+  //   console.log('REFRESHHHH', user.tokens.refresh)
+  //   axios.post(myConfig.API_REQUEST+'api/token/refresh/', {
+  //     refresh: user.tokens.refresh
+  //   })
+  //     .then(function (response) {
+  //       console.log('THE TOKEN:', response.data);
+  //       let newToken = response.data;
+  //       setUser({ ...user, Token });
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error.response);
+  //       showMessage({
+  //         message: "Attention",
+  //         description: "Vos identifiants ont expiré, par mesure de sécurité merci de vous reconnecter.",
+  //         type: "warning",
+  //       });
+  //     });
+  // };
+
   useEffect( () => {
-    restoreUserDataFromAsyncStorage();
+    // restoreUserDataFromAsyncStorage();
+    // if (user) {
+    //   refreshUser();
+    //   console.log('NEW USER', user);
+    // }
   }, [])
 
   useEffect( () => {
@@ -33,6 +60,8 @@ export default AppContexts = ({children}) => {
   }, [user]);
 
 
+
+  //externalization of some components wrapping the app, to break the require cycles in the react native warnings
   return (
     <NetworkProvider>
         <UserDataContext.Provider value={{ user, setUser }}>

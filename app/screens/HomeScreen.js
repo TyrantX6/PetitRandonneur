@@ -1,19 +1,18 @@
 import React, {useEffect, useState, useContext} from 'react';
 import myConfig from '../myConfig';
-import {UserDataContext} from '../context/AppContexts';
 //map related imports
 import {Callout, Marker} from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
 import Geolocation from 'react-native-geolocation-service';
 //react imports
 import {
+  Modal,
   SafeAreaView,
   StyleSheet,
-  View,
   Text,
-  TouchableOpacity,
   TouchableHighlight,
-  Modal,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import {PermissionsAndroid} from 'react-native';
 import axios from 'axios';
@@ -22,7 +21,6 @@ import LottieView from 'lottie-react-native';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconIonic from 'react-native-vector-icons/Ionicons';
 import OfflineWindow from '../components/OfflineWindow';
-import { NetworkConsumer } from 'react-native-offline';
 import NetInfo, {useNetInfo} from '@react-native-community/netinfo';
 import {showMessage} from 'react-native-flash-message';
 
@@ -46,7 +44,7 @@ export default HomeScreen = ({story, navigation}) => {
 
   const [markers, setMarkers] = useState([]);
 
-
+  {/* query to get the stories from the API */}
   const getStories = async () => {
     await axios.get(myConfig.API_REQUEST + 'stories/?validated=true')
       .then(function (response) {
@@ -62,6 +60,7 @@ export default HomeScreen = ({story, navigation}) => {
       });
   };
 
+  {/* retrieving User location with the help of Geolocation before removing the loader */}
   const getUserLocation = () => {
     Geolocation.getCurrentPosition(
       (position) => {
@@ -83,6 +82,7 @@ export default HomeScreen = ({story, navigation}) => {
 
   };
 
+  {/* Checking if GPS is authorized at boot*/}
   const permissionCheck = async () => {
     await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(res => {
       if (res == 'granted') {
@@ -94,6 +94,7 @@ export default HomeScreen = ({story, navigation}) => {
     });
   };
 
+  {/* function called when pressing the signs button*/}
   const requestGPSPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -119,6 +120,7 @@ export default HomeScreen = ({story, navigation}) => {
     }
   };
 
+  {/* If internet is reachable, trigger the query to get the stories, this way we deal with users opening the App with no network*/}
   const netStatus = useNetInfo();
     if ((netStatus.isInternetReachable === true) && (markers.length < 1)) {
       getStories();
@@ -129,8 +131,8 @@ export default HomeScreen = ({story, navigation}) => {
     getUserLocation();
   }, []);
 
+  {/* Creating a reference of the map to be able to use animateToRegion properly*/}
   const mapView = React.createRef();
-
   const goToUserLocation = () => {
     getUserLocation();
     mapView.current.animateToRegion({
@@ -138,16 +140,16 @@ export default HomeScreen = ({story, navigation}) => {
       longitude: userLocation.longitude,
       latitudeDelta: 0.08,
       longitudeDelta: 0.08,
-    }, {duration: 100});
+    });
   };
 
-
+  {/* Custom Markers are generated based on the list retrieved from the query*/}
   let mapMarkers;
   mapMarkers = markers.map((story) =>
     <Marker style={styles.callout}
             key={story.id}
             coordinate={{latitude: parseFloat(story.latitude), longitude: parseFloat(story.longitude)}}
-            image={require('../assets/appPictures/orangePin3.png')}
+            image={require('../assets/appPictures/orangePinSet/orangePin6.png')}
             title={story.title}
             excerpt={story.excerpt}
             onCalloutPress={() => navigation.navigate('StoryScreen', {
@@ -174,6 +176,7 @@ export default HomeScreen = ({story, navigation}) => {
       </Callout>
     </Marker>);
 
+  {/* We determine if we display loader or not */}
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -234,14 +237,16 @@ export default HomeScreen = ({story, navigation}) => {
         {mapMarkers}
       </MapView>
 
+
+      {/* Greetins Modal Button */}
       <TouchableOpacity style={styles.modalButton} onPress={() => {
         setModalVisible(true);
       }}>
         <IconIonic style={{textAlign: 'center'}} name="information-circle-outline" color={'black'} size={40}/>
       </TouchableOpacity>
 
+      {/* Here, we determine if we need to display the crosshai or the signs based on permissions granted */}
       {permissionGranted === true ?
-
         <TouchableOpacity style={styles.goToButton} onPress={goToUserLocation}>
           <IconFA style={{textAlign: 'center'}} name="crosshairs" color={'#FF8811'} size={40}/>
         </TouchableOpacity>
@@ -257,39 +262,40 @@ export default HomeScreen = ({story, navigation}) => {
 
 const styles = StyleSheet.create({
   bigLoader: {
-    width: 200,
-    height: 200,
     flex: 1,
+    height: 200,
+    padding : 50,
+    width: 200,
   },
   container: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
     alignItems: 'center',
+    flex: 1,
+    height: '100%',
+    width: '100%',
   },
   callout: {
-    height: 'auto',
-    width: 260,
     backgroundColor: '#E6E1C5',
     borderColor: '#0C2E06',
-    borderWidth: 3,
     borderRadius: 15,
+    borderWidth: 3,
+    height: 'auto',
     padding: 12,
+    width: 260,
   },
   centeredView: {
+    alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     marginTop: 22,
   },
   goToButton: {
-    position: 'absolute',
     bottom: 16,
+    position: 'absolute',
     right: 18,
   },
   permissionButton: {
-    position: 'absolute',
     bottom: 60,
+    position: 'absolute',
     right: 18,
   },
   map: {

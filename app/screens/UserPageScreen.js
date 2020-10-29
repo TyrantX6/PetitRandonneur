@@ -13,10 +13,6 @@ import {
 import { UserDataContext } from '../context/AppContexts';
 import axios from 'axios';
 import myConfig from '../myConfig';
-
-import IconIonic from 'react-native-vector-icons/Ionicons';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import {showMessage} from 'react-native-flash-message';
 
@@ -45,10 +41,11 @@ export default UserPageScreen = ({navigation}) => {
     userData.setUser(null);
   };
 
+  //asking for user's confirmation before sending the request
   const deleteConfirm = () => {
     Alert.alert(
       'Confirmez-vous la demande de suppression de votre compte?',
-      'Êtes-vous sûr et certain de vouloir supprimer votre compte, vous perdrez la possibilité de vous connecter et vos favoris. Les histoires que vous avez écrites resteront mais votre nom sera remplacé par "Auteur Anonyme".',
+      'Êtes-vous sûr et certain de vouloir supprimer votre compte, vous perdrez la possibilité de vous connecter et vos favoris. Les histoires que vous avez écrites resteront en ligne mais votre nom sera remplacé par "Auteur Anonyme".',
       [
         {
           text: 'Annulation',
@@ -56,12 +53,14 @@ export default UserPageScreen = ({navigation}) => {
           style: 'cancel'
         },
         { text: 'Confirmation',
+          //only this will trigger the deletion
           onPress: () => deleteAccount()
         }
       ]
     );
   };
 
+  // delete query on the connected AppUser
   const deleteAccount = async () => {
     await axios.delete(myConfig.API_REQUEST+'appusers/'+ userData.user.username +'/'
       , data, {

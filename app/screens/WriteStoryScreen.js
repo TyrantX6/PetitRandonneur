@@ -25,10 +25,9 @@ import {NetworkConsumer} from 'react-native-offline';
 import {showMessage} from 'react-native-flash-message';
 
 
-
 export default WriteStoryScreen = ({navigation}) => {
 
-  const userData =useContext(UserDataContext);
+  const userData = useContext(UserDataContext);
 
 
   // states used for form
@@ -57,16 +56,16 @@ export default WriteStoryScreen = ({navigation}) => {
       await AsyncStorage.setItem('story', jsonValue);
       console.log('SUCCESS');
       showMessage({
-        message: "Succès",
-        description: "L'enregistrement à bien été effecté, tous vos textes ont été sauvegardés.",
-        type: "success",
+        message: 'Succès',
+        description: 'L\'enregistrement à bien été effecté, tous vos textes ont été sauvegardés.',
+        type: 'success',
       });
     } catch (e) {
       console.log(e);
       showMessage({
-        message: "Problème",
-        description: "L'enregistrement ne s'est pas bien déroulé. Merci de retenter plus tard.",
-        type: "danger",
+        message: 'Problème',
+        description: 'L\'enregistrement ne s\'est pas bien déroulé. Merci de retenter plus tard.',
+        type: 'danger',
       });
       // saving error
     }
@@ -124,46 +123,53 @@ export default WriteStoryScreen = ({navigation}) => {
   };
 
   const sendStoryToDatabase = () => {
-
-    axios.post(myConfig.API_REQUEST + 'stories/', {
-      author: userData.user.username,
-      cover: imageData.data,
-      excerpt: inputExcerpt,
-      latitude: inputLat,
-      longitude: inputLong,
-      tale: inputTale,
-      title: inputTitle,
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + userData.user.tokens.access,
-      },
-    })
-      .then(function (response) {
-        console.log(response.status);
-        AsyncStorage.removeItem('story');
-        showMessage({
-          message: "Succès",
-          description: "Votre hisoire à bien été envoyée à l'équipe, si elle est validée, vous la retrouverez bientôt sur la carte!",
-          type: "success",
-        });
+    if ((inputExcerpt) && (inputLat) && (inputLong) && (imageData.data) && (inputTale) && (inputTitle)) {
+      axios.post(myConfig.API_REQUEST + 'stories/', {
+        author: userData.user.username,
+        cover: imageData.data,
+        excerpt: inputExcerpt,
+        latitude: inputLat,
+        longitude: inputLong,
+        tale: inputTale,
+        title: inputTitle,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + userData.user.tokens.access,
+        },
       })
-      .catch(function (error) {
-        console.log(error.response.data);
-        if (error.response.data.hasOwnProperty('title')) {
+        .then(function (response) {
+          console.log(response.status);
+          AsyncStorage.removeItem('story');
           showMessage({
-            message: "Attention",
-            description: "Une histoire existe déjà avec ce titre, merci de le modifier.",
-            type: "warning",
+            message: 'Succès',
+            description: 'Votre histoire à bien été envoyée à l\'équipe, si elle est validée, vous la retrouverez bientôt sur la carte!',
+            type: 'success',
           });
-        } else {
-          showMessage({
-            message: "Problème",
-            description: "Il y au un problème au moment de l'envoi, n'hésitez pas à sauvergarder votre histoire pour retenter plus tard.",
-            type: "danger",
-          });
-        }
+        })
+        .catch(function (error) {
+          console.log(error.response.data);
+          if (error.response.data.hasOwnProperty('title')) {
+            showMessage({
+              message: 'Attention',
+              description: 'Une histoire existe déjà avec ce titre, merci de le modifier.',
+              type: 'warning',
+            });
+          } else {
+            showMessage({
+              message: 'Problème',
+              description: 'Il y au un problème au moment de l\'envoi, n\'hésitez pas à sauvergarder votre histoire pour retenter plus tard.',
+              type: 'danger',
+            });
+          }
+        });
+    } else {
+      showMessage({
+        message: 'Problème',
+        description: 'Tous les champs n\'ont pas été remplis. Merci de les compléter.',
+        type: 'danger',
       });
+    }
   };
 
   const options = {
@@ -207,144 +213,144 @@ export default WriteStoryScreen = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
 
-          <WriteModal modalVisible={modalVisible} setModalVisible={setModalVisible}/>
-          <View style={styles.section}>
+        <WriteModal modalVisible={modalVisible} setModalVisible={setModalVisible}/>
+        <View style={styles.section}>
 
-            <TouchableOpacity style={styles.modalButton} onPress={() => {
-              setModalVisible(true);
-            }}>
-              <IconIonic style={{textAlign: 'center'}} name="information-circle-outline" color={'black'} size={40}/>
+          <TouchableOpacity style={styles.modalButton} onPress={() => {
+            setModalVisible(true);
+          }}>
+            <IconIonic style={{textAlign: 'center'}} name="information-circle-outline" color={'black'} size={40}/>
+          </TouchableOpacity>
+          <Text style={styles.screenTitle}>Suggestion d'histoires</Text>
+
+          {/* FIELDS */}
+
+          <View style={styles.labelsContainer}>
+            <Text style={styles.labels}>Titre:</Text>
+          </View>
+          <TextInput style={styles.topFields}
+                     multiline={true}
+                     onChangeText={setInputTitle}
+                     placeholder={'Titre de votre histoire'}
+                     placeholderTextColor="#E6E1C5"
+                     value={inputTitle}
+          />
+          <View style={styles.fieldsLimitsContainer}>
+            <Text style={styles.fieldsLimits}>80 caractères max.</Text>
+          </View>
+          <View style={styles.rowWrapper}>
+            <Text style={styles.fieldTipsText}>Choisissez votre photo d'illustration:</Text>
+            <TouchableOpacity
+              style={styles.pictureField}
+              onPress={openGallery}
+            >
+              <IconFontisto style={styles.photoIcons} name="photograph" color={'#FF8811'} size={42}/>
             </TouchableOpacity>
-            <Text style={styles.screenTitle}>Suggestion d'histoires</Text>
-
-            {/* FIELDS */}
-
-            <View style={styles.labelsContainer}>
-              <Text style={styles.labels}>Titre:</Text>
-            </View>
-            <TextInput style={styles.topFields}
-                       multiline={true}
-                       onChangeText={setInputTitle}
-                       placeholder={'Titre de votre histoire'}
-                       placeholderTextColor="#E6E1C5"
-                       value={inputTitle}
-            />
-            <View style={styles.fieldsLimitsContainer}>
-              <Text style={styles.fieldsLimits}>80 caractères max.</Text>
-            </View>
-            <View style={styles.rowWrapper}>
-              <Text style={styles.fieldTipsText}>Choisissez votre photo d'illustration:</Text>
-              <TouchableOpacity
-                style={styles.pictureField}
-                onPress={openGallery}
-              >
-                <IconFontisto style={styles.photoIcons} name="photograph" color={'#FF8811'} size={42}/>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.pictureField}
-                onPress={openCamera}
-              >
-                <IconFA5 style={styles.photoIcons} name="camera-retro" color={'#FF8811'} size={42}/>
-              </TouchableOpacity>
-
-
-            </View>
-            {
-              !imageData ?
-                null
-                :
-                <Image source={{uri: imageData.uri}} style={styles.fileCoverRender}/>
-            }
-
-            <View style={styles.labelsContainer}>
-              <Text style={styles.labels}>Phrase d'accroche:</Text>
-            </View>
-            <TextInput style={styles.topFields}
-                       multiline={true}
-                       onChangeText={setInputExcerpt}
-                       placeholder={'Votre phrase d\'accroche'}
-                       placeholderTextColor="#E6E1C5"
-                       value={inputExcerpt}
-            />
-            <View style={styles.fieldsLimitsContainer}>
-              <Text style={styles.fieldsLimits}>160 caractères max.</Text>
-            </View>
-
-            <Text style={styles.fieldTipsText}>Si votre photo le permet nous essaierons de remplir les champs latitude
-              et longitude pour vous, choisissez-la avant s'il vous plaît.</Text>
-            <View style={styles.labelsContainer}>
-              <Text style={styles.labels}>Localisation: </Text>
-            </View>
-            <View style={styles.rowWrapper}>
-              <TextInput style={styles.smallFields}
-                         multiline={true}
-                         onChangeText={setInputLat}
-                         placeholder={'Latitude'}
-                         placeholderTextColor="#E6E1C5"
-                         value={inputLat}
-              />
-              <TextInput style={styles.smallFields}
-                         multiline={true}
-                         onChangeText={setInputLong}
-                         placeholder={'Longitude'}
-                         placeholderTextColor="#E6E1C5"
-                         value={inputLong}
-              />
-            </View>
-            <View style={styles.fieldsLimitsContainer}>
-              <Text style={styles.fieldsLimits}>6 chiffres après la virgule max.</Text>
-            </View>
-            <View style={styles.labelsContainer}>
-              <Text style={styles.labels}>Récit complet:</Text>
-            </View>
-            <TextInput style={styles.taleField}
-                       multiline={true}
-                       numberOfLines={8}
-                       onChangeText={setInputTale}
-                       placeholder={'Votre récit : Soyez créatifs et surtout faites vous plaisir!'}
-                       placeholderTextColor="black"
-                       value={inputTale}
-            />
-            <View style={styles.fieldsLimitsContainer}>
-              <Text style={styles.fieldsLimits}>6000 caractères max.</Text>
-            </View>
-
-
-            {/* SEND BUTTON */}
-            <NetworkConsumer>
-              {({isConnected}) => (
-                isConnected ? (
-                  <TouchableOpacity
-                    style={styles.sendButton}
-                    onPress={sendStoryToDatabase}
-                  >
-                    <Text style={styles.sendButtonText}>Envoyer</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.sendButtonOffline}
-                    onPress={() => showMessage({
-                      message: "Attention",
-                      description: "Merci de vous reconnecter à Internet avant d'essayer d'envoyer une histoire.",
-                      type: "warning",
-                    })}
-                  >
-                    <Text style={styles.sendButtonText}>Envoyer</Text>
-                  </TouchableOpacity>
-                )
-              )}
-            </NetworkConsumer>
-
 
             <TouchableOpacity
-              style={styles.saveButton}
-              onPress={saveToLocalStorage}
+              style={styles.pictureField}
+              onPress={openCamera}
             >
-              <IconFontisto
-                style={styles.photoIcons} name="save" color={'#FF8811'} size={38}/>
+              <IconFA5 style={styles.photoIcons} name="camera-retro" color={'#FF8811'} size={42}/>
             </TouchableOpacity>
+
+
           </View>
+          {
+            !imageData ?
+              null
+              :
+              <Image source={{uri: imageData.uri}} style={styles.fileCoverRender}/>
+          }
+
+          <View style={styles.labelsContainer}>
+            <Text style={styles.labels}>Phrase d'accroche:</Text>
+          </View>
+          <TextInput style={styles.topFields}
+                     multiline={true}
+                     onChangeText={setInputExcerpt}
+                     placeholder={'Votre phrase d\'accroche'}
+                     placeholderTextColor="#E6E1C5"
+                     value={inputExcerpt}
+          />
+          <View style={styles.fieldsLimitsContainer}>
+            <Text style={styles.fieldsLimits}>160 caractères max.</Text>
+          </View>
+
+          <Text style={styles.fieldTipsText}>Si votre photo le permet nous essaierons de remplir les champs latitude
+            et longitude pour vous, choisissez-la avant s'il vous plaît.</Text>
+          <View style={styles.labelsContainer}>
+            <Text style={styles.labels}>Localisation: </Text>
+          </View>
+          <View style={styles.rowWrapper}>
+            <TextInput style={styles.smallFields}
+                       multiline={true}
+                       onChangeText={setInputLat}
+                       placeholder={'Latitude'}
+                       placeholderTextColor="#E6E1C5"
+                       value={inputLat}
+            />
+            <TextInput style={styles.smallFields}
+                       multiline={true}
+                       onChangeText={setInputLong}
+                       placeholder={'Longitude'}
+                       placeholderTextColor="#E6E1C5"
+                       value={inputLong}
+            />
+          </View>
+          <View style={styles.fieldsLimitsContainer}>
+            <Text style={styles.fieldsLimits}>6 chiffres après la virgule max.</Text>
+          </View>
+          <View style={styles.labelsContainer}>
+            <Text style={styles.labels}>Récit complet:</Text>
+          </View>
+          <TextInput style={styles.taleField}
+                     multiline={true}
+                     numberOfLines={8}
+                     onChangeText={setInputTale}
+                     placeholder={'Votre récit : Soyez créatifs et surtout faites vous plaisir!'}
+                     placeholderTextColor="black"
+                     value={inputTale}
+          />
+          <View style={styles.fieldsLimitsContainer}>
+            <Text style={styles.fieldsLimits}>6000 caractères max.</Text>
+          </View>
+
+
+          {/* SEND BUTTON */}
+          <NetworkConsumer>
+            {({isConnected}) => (
+              isConnected ? (
+                <TouchableOpacity
+                  style={styles.sendButton}
+                  onPress={sendStoryToDatabase}
+                >
+                  <Text style={styles.sendButtonText}>Envoyer</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.sendButtonOffline}
+                  onPress={() => showMessage({
+                    message: 'Attention',
+                    description: 'Merci de vous reconnecter à Internet avant d\'essayer d\'envoyer une histoire.',
+                    type: 'warning',
+                  })}
+                >
+                  <Text style={styles.sendButtonText}>Envoyer</Text>
+                </TouchableOpacity>
+              )
+            )}
+          </NetworkConsumer>
+
+
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={saveToLocalStorage}
+          >
+            <IconFontisto
+              style={styles.photoIcons} name="save" color={'#FF8811'} size={38}/>
+          </TouchableOpacity>
+        </View>
 
       </ScrollView>
     </SafeAreaView>

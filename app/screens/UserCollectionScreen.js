@@ -37,9 +37,9 @@ export default UserCollectionScreen = ({navigation}) => {
     getFavoritesStories();
   }, [userData.user.favorites]);
 
-
+  // queries on stories published and written by connected user.
   const getPublishedStories = async () => {
-    // url model for the filtered queries http://192.168.1.50:8000/stories/?author=Arandeira
+    // url model for the filtered queries http://192.168.1.50:8000/stories/?author=Username&validated=true'
     await axios.get(myConfig.API_REQUEST+'stories/?author='+ userData.user.username +'&validated=true')
       .then(function (response) {
         setUserStories(response.data);
@@ -54,7 +54,7 @@ export default UserCollectionScreen = ({navigation}) => {
         });
       });
   };
-
+  // rendering a text or a flatlist based on the presence of data
   let publishedStoriesRender;
 
   if (userStories.length < 1) {
@@ -106,6 +106,7 @@ export default UserCollectionScreen = ({navigation}) => {
 
   };
 
+  // rendering a text or a flatlist based on the the presence of data
   let favoritesStoriesRender;
 
   if (userData.user.favorites.length < 1) {

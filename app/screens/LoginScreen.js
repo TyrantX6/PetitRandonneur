@@ -20,10 +20,9 @@ export default LoginScreen = ({navigation}) => {
 
   const userData = React.useContext(UserDataContext);
 
-  // states used for authentification
-  const [inputUsernameConnect, setInputUsernameConnect] = useState('Nicolas');
-  const [inputPasswordConnect, setInputPasswordConnect] = useState('tano');
-  const [connectToken, setConnectToken] = useState('');
+  // states used for authentication
+  const [inputUsernameConnect, setInputUsernameConnect] = useState('Merlin');
+  const [inputPasswordConnect, setInputPasswordConnect] = useState('enchanteur');
 
   // states used for registration
   const [inputUsername, setInputUsername] = useState('');
