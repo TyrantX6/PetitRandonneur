@@ -35,6 +35,7 @@ export default UserCollectionScreen = ({navigation}) => {
   useEffect(() => {
     getPublishedStories();
     getFavoritesStories();
+    console.log('USER INFO ACCESS:', userData.user.tokens.access)
   }, [userData.user.favorites]);
 
   // queries on stories published and written by connected user.

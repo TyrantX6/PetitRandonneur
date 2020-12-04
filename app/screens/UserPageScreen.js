@@ -146,7 +146,6 @@ export default UserPageScreen = ({navigation}) => {
         <View style={styles.accountSection}>
           <Text style={styles.accountTitle}>Mon compte</Text>
           <Text style={styles.accountData}>Mon pseudo : {userData.user.username}</Text>
-          <Text style={styles.accountData}>Mon email : {userData.user.email}</Text>
 
 
           <View style={styles.changePasswordSection}>
@@ -270,6 +269,7 @@ const styles = StyleSheet.create({
     borderColor : '#FF8811',
     borderTopWidth : 2,
     elevation : 15,
+    marginVertical: 16,
     paddingVertical : 12,
   },
   changePasswordSectionSubhead : {

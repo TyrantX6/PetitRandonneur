@@ -152,7 +152,37 @@ export default WriteStoryScreen = ({navigation}) => {
           if (error.response.data.hasOwnProperty('title')) {
             showMessage({
               message: 'Attention',
-              description: 'Une histoire existe déjà avec ce titre, merci de le modifier.',
+              description: 'Une histoire existe déjà avec ce titre ou le titre est trop long, merci de le modifier.',
+              type: 'warning',
+            });
+          } else if (error.response.data.hasOwnProperty('cover')) {
+            showMessage({
+              message: 'Attention',
+              description: 'La photo choisie n\'est pas du bon type, ou est trop lourde.',
+              type: 'warning',
+            });
+          } else if (error.response.data.hasOwnProperty('excerpt')) {
+            showMessage({
+              message: 'Attention',
+              description: 'La phrase d\'accroche est trop longue.',
+              type: 'warning',
+            });
+          } else if (error.response.data.hasOwnProperty('latitude')) {
+            showMessage({
+              message: 'Attention',
+              description: 'La donnée de latitude n\'est pas au bon format.',
+              type: 'warning',
+            });
+          } else if (error.response.data.hasOwnProperty('longitude')) {
+            showMessage({
+              message: 'Attention',
+              description: 'La donnée de longitude n\'est pas au bon format.',
+              type: 'warning',
+            });
+          } else if (error.response.data.hasOwnProperty('tale')) {
+            showMessage({
+              message: 'Attention',
+              description: error.response.data.tale.toString(),
               type: 'warning',
             });
           } else {
@@ -179,6 +209,7 @@ export default WriteStoryScreen = ({navigation}) => {
     },
   };
 
+  //Functions associated to the 2 select image buttons.
   const openGallery = () => {
     ImagePicker.launchImageLibrary(options, (response) => {
       console.log('Chosen image = ', response.fileName);

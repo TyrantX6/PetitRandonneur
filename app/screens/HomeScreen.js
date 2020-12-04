@@ -144,11 +144,12 @@ export default HomeScreen = ({story, navigation}) => {
   };
 
   {/* Custom Markers are generated based on the list retrieved from the query*/}
+  console.log(markers);
   let mapMarkers;
   mapMarkers = markers.map((story) =>
     <Marker style={styles.callout}
             key={story.id}
-            coordinate={{latitude: parseFloat(story.latitude), longitude: parseFloat(story.longitude)}}
+            coordinate={{latitude: parseFloat(story.latitude.replace(',', '.')), longitude: parseFloat(story.longitude.replace(',', '.'))}}
             image={require('../assets/appPictures/orangePinSet/orangePin6.png')}
             title={story.title}
             excerpt={story.excerpt}

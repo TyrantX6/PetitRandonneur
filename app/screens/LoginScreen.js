@@ -16,6 +16,7 @@ import {showMessage} from 'react-native-flash-message';
 import {NetworkConsumer} from 'react-native-offline';
 
 
+
 export default LoginScreen = ({navigation}) => {
 
   const userData = React.useContext(UserDataContext);
@@ -46,7 +47,8 @@ export default LoginScreen = ({navigation}) => {
     })
       .then(function (response) {
         //console.log('THE TOKEN:', response.data);
-        let tokens = response.data;
+        let tokens = response.data
+        //console.log('TOKENSSSS:', tokens);
         userData.setUser({ ...userInfo, ...userData.user, tokens });
       })
       .catch(function (error) {
