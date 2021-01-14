@@ -26,7 +26,7 @@ export default NotLoggedInWriteScreen = ({navigation}) => {
           <LottieView style={styles.worldAnimation} source={require('../assets/animations/29582-looping-idle-location-animation.json')} autoPlay loop />
 
           <Text style={styles.notConnectedText}>
-          Merci de vous connecter avant de pouvoir accéder à la section d'écriture et d'envoi d'histoires.{"\n"}{"\n"} Vous verrez, c'est facile et c'est sympa!
+          Merci de vous connecter avant de pouvoir accéder à la section d'écriture et d'envoi d'histoires.!{"\n"}{"\n"} Vous verrez, c'est facile et c'est sympa!
           </Text>
           <Image
           style={styles.logo}

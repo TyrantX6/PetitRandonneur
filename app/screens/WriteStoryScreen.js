@@ -152,7 +152,7 @@ export default WriteStoryScreen = ({navigation}) => {
           if (error.response.data.hasOwnProperty('title')) {
             showMessage({
               message: 'Attention',
-              description: 'Une histoire existe déjà avec ce titre ou le titre est trop long, merci de le modifier.',
+              description: 'Une histoire existe déjà avec ce titre ou le titre est trop long, merci de le modifier.'+ error.response.data.title.toString(),
               type: 'warning',
             });
           } else if (error.response.data.hasOwnProperty('cover')) {
@@ -164,7 +164,7 @@ export default WriteStoryScreen = ({navigation}) => {
           } else if (error.response.data.hasOwnProperty('excerpt')) {
             showMessage({
               message: 'Attention',
-              description: 'La phrase d\'accroche est trop longue.',
+              description: 'La phrase d\'accroche est trop longue.' + error.response.data.excerpt.toString(),
               type: 'warning',
             });
           } else if (error.response.data.hasOwnProperty('latitude')) {
