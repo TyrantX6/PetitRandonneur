@@ -292,14 +292,15 @@ const styles = StyleSheet.create({
   connectButton: {
     alignItems: "center",
     backgroundColor: "#005554",
-    borderRadius:30,
+    borderRadius: 30,
     marginVertical : 16,
     width: '40%',
   },
   connectButtonText : {
-    fontSize : 20,
+    fontSize: 18,
     fontFamily: "JosefinSans-Regular",
-    padding : 15,
+    paddingVertical : 15,
+    paddingHorizontal: 2,
     color : '#E6E1C5',
     textAlign: 'center',
   },
@@ -347,8 +348,9 @@ const styles = StyleSheet.create({
   },
   sendButtonText : {
     fontFamily: "JosefinSans-Regular",
-    fontSize : 20,
-    padding : 15,
+    fontSize : 18,
+    paddingVertical : 15,
+    paddingHorizontal: 2,
     textAlign: 'center',
   },
   topFields: {

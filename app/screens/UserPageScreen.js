@@ -245,8 +245,9 @@ const styles = StyleSheet.create({
   },
   buttonText : {
     fontFamily: "JosefinSans-Regular",
-    fontSize : 20,
-    padding : 15,
+    fontSize : 18,
+    paddingVertical : 15,
+    paddingHorizontal: 2,
     textAlign: 'center',
   },
   changePasswordButton: {
@@ -301,7 +302,7 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     borderRadius:30,
     marginVertical : 16,
-    width: '40%',
+    width: '44%',
   },
   fieldContainer :{
     flexDirection: 'row'
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF8811",
     borderRadius:30,
     marginVertical : 16,
-    width: '40%',
+    width: '44%',
   },
   newPasswordFields: {
     backgroundColor:'#2CA6A4',

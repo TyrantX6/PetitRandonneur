@@ -122,6 +122,36 @@ export default WriteStoryScreen = ({navigation}) => {
     }
   };
 
+  //Functions associated to the 2 select image buttons.
+  const openGallery = () => {
+    ImagePicker.launchImageLibrary(options, (response) => {
+      console.log('Chosen image = ', response.fileName);
+      setImageOrigin('gallery');
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        setImageData(response);
+      }
+    });
+  };
+
+  const openCamera = () => {
+    ImagePicker.launchCamera(options, (response) => {
+      console.log('Chosen image = ', response.fileName);
+      setImageOrigin('camera');
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        setImageData(response);
+      }
+    });
+  };
+
+
   const sendStoryToDatabase = () => {
     if ((inputExcerpt) && (inputLat) && (inputLong) && (imageData.data) && (inputTale) && (inputTitle)) {
       axios.post(myConfig.API_REQUEST + 'stories/', {
@@ -209,34 +239,7 @@ export default WriteStoryScreen = ({navigation}) => {
     },
   };
 
-  //Functions associated to the 2 select image buttons.
-  const openGallery = () => {
-    ImagePicker.launchImageLibrary(options, (response) => {
-      console.log('Chosen image = ', response.fileName);
-      setImageOrigin('gallery');
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        setImageData(response);
-      }
-    });
-  };
 
-  const openCamera = () => {
-    ImagePicker.launchCamera(options, (response) => {
-      console.log('Chosen image = ', response.fileName);
-      setImageOrigin('camera');
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        setImageData(response);
-      }
-    });
-  };
 
 
   return (
